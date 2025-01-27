@@ -9,6 +9,7 @@
     <link rel="shortcut icon" type="image/png" href="/favicon.ico">
     <link rel="stylesheet" href="<?= base_url('assets/lib/coreui-5.2.0/css/coreui.min.css') ?>">
     <link rel="stylesheet" href="<?= base_url('assets/lib/fontawesome/css/all.min.css') ?>">
+    <link rel="stylesheet" href="<?= base_url('assets/css/styles.css') ?>">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 </head>
 
@@ -24,31 +25,42 @@
         </div>
         <ul class="sidebar-nav" data-coreui="navigation" data-simplebar>
             <li class="nav-item"><a class="nav-link" href="/">
-                    <i class="fa-solid fa-house"></i>&nbsp; Dashboard</a>
+                    <i class="fa-solid fa-house"></i>&nbsp; Trang Chủ</a>
             </li>
-            <li class="nav-title">Theme</li>
-            <li class="nav-item"><a class="nav-link" href="#">
-                    <i class="fa-solid fa-droplet"></i>&nbsp; Colors</a>
+
+            <li class="nav-item"><a class="nav-link" href="#"> Thống Kê Báo Cáo</a>
             </li>
-            <li class="nav-item"><a class="nav-link" href="#">
-                    <i class="fa-solid fa-pen"></i>&nbsp; Typography</a>
-            </li>
-            <li class="nav-title">Components</li>
+
             <li class="nav-group">
                 <a class="nav-link nav-group-toggle" href="#">
-                    Base</a>
+                    Quản Lý Đào Tạo</a>
                 <ul class="nav-group-items compact">
+                    <li class="nav-item"><a class="nav-link" href="/quan-ly-khoa"><span class="nav-icon"><span
+                                    class="nav-icon-bullet"></span></span> Quản Lý Khoa</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/quan-ly-bo-mon"><span class="nav-icon"><span
+                                    class="nav-icon-bullet"></span></span> Quản Lý Bộ Môn</a></li>
                     <li class="nav-item"><a class="nav-link" href="#"><span class="nav-icon"><span
-                                    class="nav-icon-bullet"></span></span> Accordion</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#"><span class="nav-icon"><span
-                                    class="nav-icon-bullet"></span></span> Breadcrumb</a></li>
-                    <li class="nav-item"><a class="nav-link"
-                            href="https://coreui.io/bootstrap/docs/components/calendar/" target="_blank"><span
-                                class="nav-icon"><span class="nav-icon-bullet"></span></span> Calendar
-                            <span class="badge badge-sm bg-danger ms-auto">PRO</span></a>
-                    </li>
+                                    class="nav-icon-bullet"></span></span> Quản Lý Chuyên Ngành</a></li>
+
                 </ul>
             </li>
+            <li class="nav-group">
+                <a class="nav-link nav-group-toggle" href="#">
+                    Quản Lý Nhân Sự</a>
+                <ul class="nav-group-items compact">
+                    <li class="nav-item"><a class="nav-link" href="#"><span class="nav-icon"><span
+                                    class="nav-icon-bullet"></span></span> Quản Lý Giảng Viên </a></li>
+                    <li class="nav-item"><a class="nav-link" href="#"><span class="nav-icon"><span
+                                    class="nav-icon-bullet"></span></span> Quản Lý Sinh Viên</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#"><span class="nav-icon"><span
+                                    class="nav-icon-bullet"></span></span> Quản Lý Cán Bộ Giảng Viên</a></li>
+
+                </ul>
+            </li>
+            <li class="nav-item"><a class="nav-link" href="#">Quản Lý Đồ Án</a>
+            </li>
+
+
             <div class="sidebar-footer border-top d-none d-md-flex">
                 <button class="sidebar-toggler" type="button" data-coreui-toggle="unfoldable"></button>
             </div>
@@ -99,7 +111,7 @@
                 </nav> -->
             </div>
         </header>
-        <main class="content">
+        <main class="content flex-grow-1">
             <?= $this->renderSection("content") ?>
         </main>
         <footer class="footer px-4">
@@ -123,6 +135,7 @@
             }
         });
     </script>
+    <?= $this->renderSection("scripts") ?>
 </body>
 
 </html>

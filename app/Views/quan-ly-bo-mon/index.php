@@ -20,17 +20,19 @@ Quản Lý Bộ Môn
   <table class="table table-striped">
     <thead>
       <tr>
-        <th scope="col">#</th>
+        <th scope="col">STT</th>
+        <th scope="col">Tên Khoa</th>
         <th scope="col">Tên Bộ Môn</th>
-        <th scope="col">Mô Tả</th>
         <th scope="col">Hành Động</th>
       </tr>
     </thead>
     <tbody>
+    <?php if ($bomon): ?>
+      <?php foreach ($bomon as $b): ?>
       <tr>
-        <th scope="row">1</th>
-        <td>Quản lý Bộ Môn 1</td>
-        <td>Mô tả Bộ Môn 1</td>
+        <th scope="row"><?php echo $b['MaBoMon']; ?></th>
+        <td><?php echo $b['tenKhoa']; ?></td>
+        <td><?php echo $b['TenBoMon']; ?></td>
         <td>
           <button class="btn btn-sm btn-primary" data-coreui-toggle="modal" data-coreui-target="#editBoMonModal"
             data-id="1" data-tenBoMon="Quản lý Bộ Môn 1" data-moTaBoMon="Mô tả Bộ Môn 1">
@@ -45,24 +47,8 @@ Quản Lý Bộ Môn
           </button>
         </td>
       </tr>
-      <tr>
-        <th scope="row">2</th>
-        <td>Quản lý Bộ Môn 2</td>
-        <td>Mô tả Bộ Môn 2</td>
-        <td>
-          <button class="btn btn-sm btn-primary" data-coreui-toggle="modal" data-coreui-target="#editBoMonModal"
-            data-id="1" data-tenBoMon="Quản lý Bộ Môn 1" data-moTaBoMon="Mô tả Bộ Môn 1">
-            <i class="fa-solid fa-pen"></i>
-          </button>
-          <button class="btn btn-sm btn-danger text-light"
-            data-coreui-toggle="modal"
-            data-coreui-target="#deleteBoMonModal"
-            data-id="2"
-            data-tenBoMon="Quản lý Bộ Môn 2">
-            <i class="fa-solid fa-trash"></i>
-          </button>
-        </td>
-      </tr>
+      <?php endforeach; ?>
+      <?php endif; ?>
     </tbody>
   </table>
 </div>
@@ -76,14 +62,10 @@ Quản Lý Bộ Môn
         <button type="button" class="btn-close" data-coreui-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <form action="<?= base_url('quan-ly-bo-mon/add_bo_mon') ?>" method="POST">
+        <form action="<?= base_url('quan-ly-bo-mon/store-bo-mon') ?>" method="POST">
           <div class="mb-3">
             <label for="tenBoMon" class="form-label">Tên Bộ Môn</label>
             <input type="text" class="form-control" id="tenBoMon" name="tenBoMon" required>
-          </div>
-          <div class="mb-3">
-            <label for="moTaBoMon" class="form-label">Mô Tả Bộ Môn</label>
-            <input type="text" class="form-control" id="moTaBoMon" name="moTaBoMon" required>
           </div>
           <div class="d-flex align-items-center justify-content-end gap-2">
             <button type="button" class="btn btn-secondary" data-coreui-dismiss="modal">Đóng</button>

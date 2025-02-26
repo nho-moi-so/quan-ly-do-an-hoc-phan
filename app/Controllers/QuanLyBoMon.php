@@ -1,12 +1,15 @@
 <?php
 
 namespace App\Controllers;
-
+use App\Models\BomonModel;
 class QuanLyBoMon extends BaseController
 {
     public function index(): string
     {
-        return view('quan-ly-bo-mon/index');
+        $BomonModel = new BomonModel();
+        $data['bomon'] = $BomonModel->orderBy('MaBoMon', 'DESC')->select('bomon.*, khoa.tenKhoa') // Lấy cả tên khoa
+        ->join('khoa', 'khoa.maKhoa = bomon.maKhoa', 'left') ->findAll();
+        return view('quan-ly-bo-mon/index', $data);
     }
     public function add()
     {
@@ -14,13 +17,28 @@ class QuanLyBoMon extends BaseController
         session()->setFlashdata('message_type', 'success');
         return redirect()->to('/quan-ly-bo-mon')->with('message', 'Thêm Bộ Môn thành công!');
     }
+    
+    // luu
+    public function store() 
+    {
+        $BomonModel = new BomonModel();
+        $data = [
+            'TenBoMon' => $this->request->getVar('TenBoMon'),
+           
+        ];
+        if ($BomonModel->insert($data)) {
+            return redirect()->to('/quan-ly-bo-mon');
+        } else {
+            return redirect()->back()->with('error', 'Có lỗi xảy ra, vui lòng thử lại!');
+        }
+        return $this->response->redirect(site_url('/quan-ly-bo-mon'));
+    }
 
     public function edit()
     {
         // Lấy dữ liệu từ POST
         $BoMonId = $this->request->getPost('BoMonId');
         $tenBoMon = $this->request->getPost('tenBoMon');
-        $moTaBoMon = $this->request->getPost('moTaBoMon');
 
         // Cập nhật dữ liệu vào database
         // $model = new BoMonModel();

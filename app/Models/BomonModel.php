@@ -2,11 +2,11 @@
 namespace App\Models;
 use CodeIgniter\Model;
 
-class BomonModel extends Model
+class BoMonModel extends Model
 {
     protected $table = 'bomon';
 
-    protected $primaryKey = 'MaBoMon';
+    protected $primaryKey = 'maBoMon';
     
-    protected $allowedFields = ['TenBoMon','tenKhoa'];
+    protected $allowedFields = ['tenBoMon', 'maKhoa'];
 }

@@ -1,0 +1,136 @@
+<?php
+
+namespace App\Controllers;
+
+use App\Models\LopModel;
+use App\Models\NganhModel;
+
+class QuanLyLop extends BaseController
+{
+    public function index()
+    {
+        $LopModel = new LopModel();
+        $data['lop'] = $LopModel->select('lop.*, nganh.tenNganh, nganh.maNganh')
+        ->join('nganh', 'nganh.maNganh = lop.maNganh', 'left')->orderBy('maLop', 'DESC')->findAll();
+        $NganhModel = new NganhModel();
+        $data['nganh'] = $NganhModel->orderBy('maNganh', 'DESC')->findAll();
+        return view('quan-ly-lop/index', $data);
+    }
+
+    public function add()
+    {
+        $LopModel = new LopModel();
+
+        $tenLop = $this->request->getVar('tenLop');
+        $maNganh = $this->request->getVar('maNganh');
+        
+        if (empty($tenLop)) {
+            session()->setFlashdata('message_type', 'error');
+            session()->setFlashdata('message', 'Tên lớp không được để trống!');
+            return redirect()->back();
+        }
+
+        $data = [
+            'tenLop' => $tenLop,
+            'maNganh' => $maNganh,
+            
+        ];
+
+        try {
+            if ($LopModel->insert($data)) {
+                session()->setFlashdata('message_type', 'success');
+                session()->setFlashdata('message', 'Thêm lớp thành công!');
+            } else {
+                session()->setFlashdata('message_type', 'error');
+                session()->setFlashdata('message', 'Có lỗi xảy ra, vui lòng thử lại!');
+            }
+        } catch (\Exception $e) {
+            session()->setFlashdata('message_type', 'error');
+            session()->setFlashdata('message', 'Lỗi: ' . $e->getMessage());
+        }
+
+        return redirect()->to('/quan-ly-lop');
+    }
+
+
+    public function edit()
+    {
+        $LopModel = new LopModel();
+        $id = $this->request->getPost('maLop');
+
+        if (!$id) {
+            session()->setFlashdata('message_type', 'error');
+            session()->setFlashdata('message', 'Lớp không tồn tại!');
+            return redirect()->to('/quan-ly-lop');
+        }
+
+        if ($this->request->getMethod() === 'POST') {
+            $tenLop = trim($this->request->getPost('tenLop'));
+            $maNganh = trim($this->request->getPost('maNganh'));
+           
+            if (empty($tenLop)) {
+                session()->setFlashdata('message_type', 'error');
+                session()->setFlashdata('message', 'Tên Lớp không được để trống!');
+                return redirect()->back();
+            }
+
+            $curentLop = $LopModel->find($id);
+
+            if (!$curentLop) {
+                session()->setFlashdata('message_type', 'error');
+                session()->setFlashdata('message', 'Lớp không tồn tại!');
+                return redirect()->to('/quan-ly-lop');
+            }
+
+            $data = [
+                'tenLop' => $tenLop,
+                'maNganh' => $maNganh,
+               
+            ];
+
+            if ($LopModel->update($id, $data)) {
+                session()->setFlashdata('message_type', 'success');
+                session()->setFlashdata('message', 'Cập nhật lớp thành công!');
+            } else {
+                session()->setFlashdata('message_type', 'error');
+                session()->setFlashdata('message', 'Có lỗi xảy ra, vui lòng thử lại!');
+            }
+        }
+
+        return redirect()->to('/quan-ly-lop');
+    }
+
+    public function delete($id = null)
+    {
+        $LopModel = new LopModel();
+
+        if (!$id) {
+            session()->setFlashdata('message_type', 'error');
+            session()->setFlashdata('message', 'Không tìm thấy lớp cần xóa!');
+            return redirect()->to('/quan-ly-lop');
+        }
+
+        $curentLop = $LopModel->find($id);
+
+        if (!$curentLop) {
+            session()->setFlashdata('message_type', 'error');
+            session()->setFlashdata('message', 'Lớp không tồn tại!');
+            return redirect()->to('/quan-ly-lop');
+        }
+
+        try {
+            if ($LopModel->delete($id)) {
+                session()->setFlashdata('message_type', 'success');
+                session()->setFlashdata('message', 'Xóa lớp thành công!');
+            } else {
+                session()->setFlashdata('message_type', 'error');
+                session()->setFlashdata('message', 'Xóa lớp thất bại, vui lòng thử lại!');
+            }
+        } catch (\Exception $e) {
+            session()->setFlashdata('message_type', 'error');
+            session()->setFlashdata('message', 'Không thể xóa lớp vì đang được sử dụng!');
+        }
+
+        return redirect()->to('/quan-ly-lop');
+    }
+}

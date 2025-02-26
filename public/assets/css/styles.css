@@ -4,3 +4,8 @@
     will-change: auto;
     transition: padding 0.15s;
 }
+.group {
+    display: ruby;
+    margin-left: 12px;
+    margin-top: 30px;
+}

@@ -39,8 +39,10 @@
                                     class="nav-icon-bullet"></span></span> Quản Lý Khoa</a></li>
                     <li class="nav-item"><a class="nav-link" href="/quan-ly-bo-mon"><span class="nav-icon"><span
                                     class="nav-icon-bullet"></span></span> Quản Lý Bộ Môn</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#"><span class="nav-icon"><span
-                                    class="nav-icon-bullet"></span></span> Quản Lý Chuyên Ngành</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/quan-ly-nganh"><span class="nav-icon"><span
+                                    class="nav-icon-bullet"></span></span> Quản Lý Ngành</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/quan-ly-lop"><span class="nav-icon"><span
+                                    class="nav-icon-bullet"></span></span> Quản Lý Lớp</a></li>
 
                 </ul>
             </li>
@@ -48,17 +50,20 @@
                 <a class="nav-link nav-group-toggle" href="#">
                     Quản Lý Nhân Sự</a>
                 <ul class="nav-group-items compact">
-                    <li class="nav-item"><a class="nav-link" href="#"><span class="nav-icon"><span
+                    <li class="nav-item"><a class="nav-link" href="/quan-ly-giang-vien"><span class="nav-icon"><span
                                     class="nav-icon-bullet"></span></span> Quản Lý Giảng Viên </a></li>
-                    <li class="nav-item"><a class="nav-link" href="#"><span class="nav-icon"><span
+                    <li class="nav-item"><a class="nav-link" href="/quan-ly-sinh-vien"><span class="nav-icon"><span
                                     class="nav-icon-bullet"></span></span> Quản Lý Sinh Viên</a></li>
                     <li class="nav-item"><a class="nav-link" href="#"><span class="nav-icon"><span
                                     class="nav-icon-bullet"></span></span> Quản Lý Cán Bộ Giảng Viên</a></li>
 
                 </ul>
             </li>
-            <li class="nav-item"><a class="nav-link" href="#">Quản Lý Đồ Án</a>
+            <li class="nav-item"><a class="nav-link" href="/quan-ly-de-tai">Quản Lý Đề Tài</a>
             </li>
+            <li class="nav-item"><a class="nav-link" href="/quan-ly-do-an">Quản Lý Đồ Án</a>
+            </li>
+
 
 
             <div class="sidebar-footer border-top d-none d-md-flex">

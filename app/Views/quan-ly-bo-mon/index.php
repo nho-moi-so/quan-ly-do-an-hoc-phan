@@ -20,34 +20,37 @@ Quản Lý Bộ Môn
   <table class="table table-striped">
     <thead>
       <tr>
-        <th scope="col">STT</th>
-        <th scope="col">Tên Khoa</th>
+        <th scope="col">ID</th>
         <th scope="col">Tên Bộ Môn</th>
+        <th scope="col">Tên Khoa</th>
         <th scope="col">Hành Động</th>
       </tr>
     </thead>
     <tbody>
-    <?php if ($bomon): ?>
-      <?php foreach ($bomon as $b): ?>
-      <tr>
-        <th scope="row"><?php echo $b['MaBoMon']; ?></th>
-        <td><?php echo $b['tenKhoa']; ?></td>
-        <td><?php echo $b['TenBoMon']; ?></td>
-        <td>
-          <button class="btn btn-sm btn-primary" data-coreui-toggle="modal" data-coreui-target="#editBoMonModal"
-            data-id="1" data-tenBoMon="Quản lý Bộ Môn 1" data-moTaBoMon="Mô tả Bộ Môn 1">
-            <i class="fa-solid fa-pen"></i>
-          </button>
-          <button class="btn btn-sm btn-danger text-light"
-            data-coreui-toggle="modal"
-            data-coreui-target="#deleteBoMonModal"
-            data-id="1"
-            data-tenBoMon="Quản lý Bộ Môn 1">
-            <i class="fa-solid fa-trash"></i>
-          </button>
-        </td>
-      </tr>
-      <?php endforeach; ?>
+      <?php if ($bomon): ?>
+        <?php foreach ($bomon as $bm): ?>
+          <tr>
+            <th scope="row"><?php echo $bm['maBoMon']; ?></th>
+            <td><?php echo $bm['tenBoMon']; ?></td>
+            <td><?php echo $bm['tenKhoa']; ?></td>
+            <td>
+              <button class="btn btn-sm btn-primary"
+                data-coreui-toggle="modal"
+                data-coreui-target="#editBoMonModal"
+                data-id="<?php echo $bm['maBoMon']; ?>"
+                data-tenBoMon="<?php echo $bm['tenBoMon']; ?>"
+                data-maKhoa="<?php echo $bm['maKhoa']; ?>"
+                data-tenKhoa="<?php echo $bm['tenKhoa']; ?>"><i class="fa-solid fa-pen"></i>
+              </button>
+              <button class="btn btn-sm btn-danger text-light"
+                data-coreui-toggle="modal"
+                data-coreui-target="#deleteBoMonModal"
+                data-id="<?php echo $bm['maBoMon']; ?>"
+                data-tenBoMon="<?php echo $bm['tenBoMon']; ?>"><i class="fa-solid fa-trash"></i>
+              </button>
+            </td>
+          </tr>
+        <?php endforeach; ?>
       <?php endif; ?>
     </tbody>
   </table>
@@ -62,10 +65,18 @@ Quản Lý Bộ Môn
         <button type="button" class="btn-close" data-coreui-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <form action="<?= base_url('quan-ly-bo-mon/store-bo-mon') ?>" method="POST">
+        <form action="<?= base_url('quan-ly-bo-mon/add-bo-mon') ?>" method="POST">
           <div class="mb-3">
             <label for="tenBoMon" class="form-label">Tên Bộ Môn</label>
-            <input type="text" class="form-control" id="tenBoMon" name="tenBoMon" required>
+            <input type="text" class="form-control" id="tenBoMon" name="tenBoMon" placeholder="Nhập tên bộ môn" required>
+            <label for="chonKhoa" class="form-label">Khoa</label>
+            <select id="chonKhoa" name="maKhoa" class="form-select" required>
+              <?php if ($khoa): ?>
+                <?php foreach ($khoa as $k): ?>
+                  <option value="<?php echo $k['maKhoa']; ?>"><?php echo $k['tenKhoa']; ?></option>
+                <?php endforeach; ?>
+              <?php endif; ?>
+            </select>
           </div>
           <div class="d-flex align-items-center justify-content-end gap-2">
             <button type="button" class="btn btn-secondary" data-coreui-dismiss="modal">Đóng</button>
@@ -89,15 +100,21 @@ Quản Lý Bộ Môn
         <button type="button" class="btn-close" data-coreui-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <form id="editBoMonForm" method="POST" action="<?= base_url('quan-ly-bo-mon/edit_bo_mon') ?>">
-          <input type="hidden" name="BoMonId" id="BoMonId" value="">
+        <form id="editBoMonForm" method="POST" action="<?= base_url('quan-ly-bo-mon/edit-bo-mon') ?>">
+          <input type="hidden" name="maBoMon" id="maBoMon" value="">
           <div class="mb-3">
             <label for="tenBoMonEdit" class="form-label">Tên Bộ Môn</label>
             <input type="text" class="form-control" id="tenBoMonEdit" name="tenBoMon" required>
           </div>
           <div class="mb-3">
-            <label for="moTaBoMonEdit" class="form-label">Mô Tả Bộ Môn</label>
-            <input type="text" class="form-control" id="moTaBoMonEdit" name="moTaBoMon" required>
+            <label for="chonKhoaEdit" class="form-label">Khoa</label>
+            <select id="chonKhoaEdit" name="maKhoa" class="form-select" required>
+              <?php if ($khoa): ?>
+                <?php foreach ($khoa as $k): ?>
+                  <option value="<?php echo $k['maKhoa']; ?>"><?php echo $k['tenKhoa']; ?></option>
+                <?php endforeach; ?>
+              <?php endif; ?>
+            </select>
           </div>
           <div class="d-flex align-items-center justify-content-end gap-2">
             <button type="button" class="btn btn-secondary" data-coreui-dismiss="modal">Đóng</button>
@@ -118,11 +135,11 @@ Quản Lý Bộ Môn
         <button type="button" class="btn-close" data-coreui-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <p>Bạn có chắc chắn muốn xóa Bộ Môn <strong id="BoMonNameToDelete"></strong> không?</p>
+        <p>Bạn có chắc chắn muốn xóa Bộ Môn <strong id="tenBoMonToDelete"></strong> không?</p>
       </div>
       <div class="modal-footer">
-        <form id="deleteBoMonForm" method="POST" action="<?= base_url('quan-ly-bo-mon/delete_bo_mon') ?>">
-          <input type="hidden" name="BoMonId" id="BoMonIdDelete" value="">
+        <form id="deleteBoMonForm" method="GET" action="">
+          <input type="hidden" name="maBoMon" id="maBoMonDelete" value="">
           <button type="button" class="btn btn-secondary" data-coreui-dismiss="modal">Hủy</button>
           <button type="submit" class="btn btn-danger">Xóa</button>
         </form>
@@ -164,13 +181,20 @@ Quản Lý Bộ Môn
 
     editButtons.forEach(button => {
       button.addEventListener('click', function() {
-        const BoMonId = this.getAttribute('data-id');
+        const maBoMon = this.getAttribute('data-id');
         const tenBoMon = this.getAttribute('data-tenBoMon');
-        const moTaBoMon = this.getAttribute('data-moTaBoMon');
+        const maKhoa = this.getAttribute('data-maKhoa');
+        const selectKhoa = document.getElementById("chonKhoaEdit");
 
-        document.getElementById('BoMonId').value = BoMonId;
+        document.getElementById('maBoMon').value = maBoMon;
         document.getElementById('tenBoMonEdit').value = tenBoMon;
-        document.getElementById('moTaBoMonEdit').value = moTaBoMon;
+
+        for (let option of selectKhoa.options) {
+          if (option.value == maKhoa) {
+            option.selected = true;
+            break;
+          }
+        }
       });
     });
 
@@ -179,13 +203,14 @@ Quản Lý Bộ Môn
 
     deleteButtons.forEach(button => {
       button.addEventListener('click', function() {
-        const BoMonId = this.getAttribute('data-id');
+        const maBoMon = this.getAttribute('data-id');
         const tenBoMon = this.getAttribute('data-tenBoMon');
 
-        document.getElementById('BoMonIdDelete').value = BoMonId;
-        document.getElementById('BoMonNameToDelete').textContent = tenBoMon   ;
+        document.getElementById('maBoMonDelete').value = maBoMon;
+        document.getElementById('tenBoMonToDelete').textContent = tenBoMon;
+        document.getElementById('deleteBoMonForm').action = "<?= base_url('quan-ly-bo-mon/delete-bo-mon/') ?>" + maBoMon;
       });
     });
   });
-</script>h 
+</script>
 <?= $this->endSection() ?>

@@ -10,6 +10,7 @@ Trang Chủ
     <div class="title">
       <h4 class="text-center">Quản Lý Khoa</h4>
     </div>
+
     <div>
       <button type="button" class="btn btn-primary" data-coreui-toggle="modal" data-coreui-target="#addKhoaModal">Thêm Khoa Mới</button>
     </div>
@@ -20,51 +21,39 @@ Trang Chủ
   <table class="table table-striped">
     <thead>
       <tr>
-        <th scope="col">#</th>
+        <th scope="col">ID</th>
         <th scope="col">Tên Khoa</th>
         <th scope="col">Mô Tả</th>
         <th scope="col">Hành Động</th>
       </tr>
     </thead>
     <tbody>
-      <tr>
-        <th scope="row">1</th>
-        <td>Quản lý Khoa 1</td>
-        <td>Mô tả khoa 1</td>
-        <td>
-          <button class="btn btn-sm btn-primary" data-coreui-toggle="modal" data-coreui-target="#editKhoaModal"
-            data-id="1" data-tenKhoa="Quản lý Khoa 1" data-moTaKhoa="Mô tả khoa 1">
-            <i class="fa-solid fa-pen"></i>
-          </button>
-          <button class="btn btn-sm btn-danger text-light"
-            data-coreui-toggle="modal"
-            data-coreui-target="#deleteKhoaModal"
-            data-id="1"
-            data-tenKhoa="Quản lý Khoa 1">
-            <i class="fa-solid fa-trash"></i>
-          </button>
-        </td>
-      </tr>
-      <tr>
-        <th scope="row">2</th>
-        <td>Quản lý Khoa 2</td>
-        <td>Mô tả khoa 2</td>
-        <td>
-          <button class="btn btn-sm btn-primary" data-coreui-toggle="modal" data-coreui-target="#editKhoaModal"
-            data-id="1" data-tenKhoa="Quản lý Khoa 1" data-moTaKhoa="Mô tả khoa 1">
-            <i class="fa-solid fa-pen"></i>
-          </button>
-          <button class="btn btn-sm btn-danger text-light"
-            data-coreui-toggle="modal"
-            data-coreui-target="#deleteKhoaModal"
-            data-id="2"
-            data-tenKhoa="Quản lý Khoa 2">
-            <i class="fa-solid fa-trash"></i>
-          </button>
-        </td>
-      </tr>
+      <?php if ($khoa): ?>
+        <?php foreach ($khoa as $k): ?>
+          <tr>
+            <th scope="row"><?php echo $k['maKhoa']; ?></th>
+            <td><?php echo $k['tenKhoa']; ?></td>
+            <td><?php echo $k['moTaKhoa']; ?></td>
+            <td>
+              <button class="btn btn-sm btn-primary" data-coreui-toggle="modal" data-coreui-target="#editKhoaModal"
+                data-id="<?php echo $k['maKhoa']; ?>" data-tenKhoa="<?php echo $k['tenKhoa']; ?>" data-moTaKhoa="<?php echo $k['moTaKhoa']; ?>">
+                <i class="fa-solid fa-pen"></i>
+              </button>
+              <button class="btn btn-sm btn-danger text-light"
+                data-coreui-toggle="modal"
+                data-coreui-target="#deleteKhoaModal"
+                data-id="<?php echo $k['maKhoa']; ?>"
+                data-tenKhoa="<?php echo $k['tenKhoa']; ?>">
+                <i class="fa-solid fa-trash"></i>
+              </button>
+            </td>
+          </tr>
+        <?php endforeach; ?>
+      <?php endif; ?>
     </tbody>
   </table>
+
+
 </div>
 
 <!-- Add New Khoa Modal -->
@@ -108,14 +97,15 @@ Trang Chủ
       </div>
       <div class="modal-body">
         <form id="editKhoaForm" method="POST" action="<?= base_url('quan-ly-khoa/edit-khoa') ?>">
-          <input type="hidden" name="khoaId" id="khoaId" value="">
+          <?= csrf_field() ?>
+          <input type="hidden" name="maKhoa" id="maKhoa">
           <div class="mb-3">
             <label for="tenKhoaEdit" class="form-label">Tên Khoa</label>
             <input type="text" class="form-control" id="tenKhoaEdit" name="tenKhoa" required>
           </div>
           <div class="mb-3">
             <label for="moTaKhoaEdit" class="form-label">Mô Tả Khoa</label>
-            <input type="text" class="form-control" id="moTaKhoaEdit" name="moTaKhoa" required>
+            <input type="text" class="form-control" id="moTaKhoaEdit" name="moTaKhoa">
           </div>
           <div class="d-flex align-items-center justify-content-end gap-2">
             <button type="button" class="btn btn-secondary" data-coreui-dismiss="modal">Đóng</button>
@@ -136,11 +126,11 @@ Trang Chủ
         <button type="button" class="btn-close" data-coreui-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <p>Bạn có chắc chắn muốn xóa khoa <strong id="khoaNameToDelete"></strong> không?</p>
+        <p>Bạn có chắc chắn muốn xóa khoa <strong id="tenKhoaToDelete"></strong> không?</p>
       </div>
       <div class="modal-footer">
-        <form id="deleteKhoaForm" method="POST" action="<?= base_url('quan-ly-khoa/delete-khoa') ?>">
-          <input type="hidden" name="khoaId" id="khoaIdDelete" value="">
+        <form id="deleteKhoaForm" method="GET" action="">
+          <input type="hidden" name="maKhoa" id="maKhoaDelete" value="">
           <button type="button" class="btn btn-secondary" data-coreui-dismiss="modal">Hủy</button>
           <button type="submit" class="btn btn-danger">Xóa</button>
         </form>
@@ -182,11 +172,15 @@ Trang Chủ
 
     editButtons.forEach(button => {
       button.addEventListener('click', function() {
-        const khoaId = this.getAttribute('data-id');
+        const maKhoa = this.getAttribute('data-id');
         const tenKhoa = this.getAttribute('data-tenKhoa');
         const moTaKhoa = this.getAttribute('data-moTaKhoa');
 
-        document.getElementById('khoaId').value = khoaId;
+        console.log(maKhoa);
+        console.log(tenKhoa);
+        console.log(moTaKhoa);
+
+        document.getElementById('maKhoa').value = maKhoa;
         document.getElementById('tenKhoaEdit').value = tenKhoa;
         document.getElementById('moTaKhoaEdit').value = moTaKhoa;
       });
@@ -197,13 +191,14 @@ Trang Chủ
 
     deleteButtons.forEach(button => {
       button.addEventListener('click', function() {
-        const khoaId = this.getAttribute('data-id');
+        const maKhoa = this.getAttribute('data-id');
         const tenKhoa = this.getAttribute('data-tenKhoa');
 
-        document.getElementById('khoaIdDelete').value = khoaId;
-        document.getElementById('khoaNameToDelete').textContent = tenKhoa;
+        document.getElementById('maKhoaDelete').value = maKhoa;
+        document.getElementById('tenKhoaToDelete').textContent = tenKhoa;
+        document.getElementById('deleteKhoaForm').action = "<?= base_url('quan-ly-khoa/delete-khoa/') ?>" + maKhoa;
       });
     });
   });
-</script>h 
+</script>h
 <?= $this->endSection() ?>

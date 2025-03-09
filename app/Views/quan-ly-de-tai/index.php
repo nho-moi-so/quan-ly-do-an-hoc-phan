@@ -16,51 +16,50 @@ Trang Chủ
         </div>
     </div>
 </div>
-<div class="group">
-    <div class="btn-group">
-        <button class="btn btn-secondary dropdown-toggle" type="button" data-coreui-toggle="dropdown" data-coreui-auto-close="true" aria-expanded="false">
-            Chuyên Ngành
-        </button>
-        <ul class="dropdown-menu">
-            <?php foreach ($nganh as $n): ?>
-                <li><a class="dropdown-item" href="#"><?= $n['tenNganh']; ?></a></li>
-            <?php endforeach; ?>
-        </ul>
-    </div>
-
-    <div class="btn-group">
-        <button class="btn btn-secondary dropdown-toggle" type="button" data-coreui-toggle="dropdown" data-coreui-auto-close="inside" aria-expanded="false">
-            Học Kì
-        </button>
-        <?php
-        $hocKihientai = isset($detai['hocKi']) ? $detai['hocKi'] : '1';
-        ?>
-        <ul class="dropdown-menu">
-            <option value="1" <?= ($hocKihientai == '1') ? 'selected' : ''; ?>>1</option>
-            <option value="2" <?= ($hocKihientai == '2') ? 'selected' : ''; ?>>2</option>
-            <option value="Hè" <?= ($hocKihientai == 'Hè') ? 'selected' : ''; ?>>Hè</option>
-        </ul>
-    </div>
-
-    <div class="btn-group">
-        <button class="btn btn-secondary dropdown-toggle" type="button" data-coreui-toggle="dropdown" data-coreui-auto-close="outside" aria-expanded="false">
-            Năm Học
-        </button>
-        <ul class="dropdown-menu">
-            <?php if (!empty($namHoc)): ?>
-                <?php foreach ($namHoc as $nh): ?>
-                    <option value="<?= $nh['namHoc']; ?>"><?= $nh['namHoc']; ?></option>
-                <?php endforeach; ?>
-            <?php endif; ?>
-        </ul>
-    </div>
-
-    <div>
-        <button type="button" class="btn btn-primary" data-coreui-toggle="modal" data-coreui-target="#timkiemModal">Tìm Kiếm</button>
-    </div>
-</div>
 
 <div class="container border-top pt-4">
+
+    <div class="filter mb-4">
+        <form action="<?= base_url('/quan-ly-de-tai/timkiem') ?>" method="GET">
+            <div class="row">
+                <div class="col-md-4">
+                    <label for="maNganh">Ngành:</label>
+                    <select name="maNganh" id="maNganh" class="form-control">
+                        <option value="all">Chọn tất cả ngành</option>
+                        <?php if ($nganh): ?>
+                            <?php foreach ($nganh as $n): ?>
+                                <option value="<?= $n['maNganh']; ?>"><?= $n['tenNganh']; ?></option>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </select>
+                </div>
+
+                <div class="col-md-4">
+                    <label for="hocKi">Học Kỳ:</label>
+                    <select name="hocKi" id="hocKi" class="form-control">
+                        <option value="all">Chọn tất cả học kỳ</option>
+                        <option value="1">Học Kỳ 1</option>
+                        <option value="2">Học Kỳ 2</option>
+                        <option value="Hè">Học kỳ hè</option>
+                    </select>
+                </div>
+
+                <div class="col-md-4">
+                    <label for="namHoc">Năm Học:</label>
+                    <select name="namHoc" id="namHoc" class="form-control">
+                        <option value="all">Chọn tất cả năm học</option>
+                        <?php if (!empty($namHoc)): ?>
+                            <?php foreach ($namHoc as $nh): ?>
+                                <option value="<?= $nh['namHoc']; ?>"><?= $nh['namHoc']; ?></option>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </select>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary mt-3">Tìm kiếm</button>
+        </form>
+    </div>
     <table class="table table-striped">
         <thead>
             <tr>
@@ -92,6 +91,7 @@ Trang Chủ
                                 data-moTa="<?php echo $dt['moTa']; ?>"
                                 data-maGiangVien="<?php echo $dt['maGiangVien']; ?>"
                                 data-hoTen="<?php echo $dt['hoTen']; ?>"
+                                data-maNganh="<?php echo $dt['maNganh']; ?>"
                                 data-tenNganh="<?php echo $dt['tenNganh']; ?>"
                                 data-hocKi="<?php echo $dt['hocKi']; ?>"
                                 data-namHoc="<?php echo $dt['namHoc']; ?>"> <i class="fa-solid fa-pen"></i>
@@ -103,12 +103,29 @@ Trang Chủ
                                 data-tenDeTai="<?php echo $dt['tenDeTai']; ?>"
                                 data-moTa="<?php echo $dt['moTa']; ?>"
                                 data-maGiangVien="<?php echo $dt['maGiangVien']; ?>"
+                                data-maNganh="<?php echo $dt['maNganh']; ?>"
                                 data-tenNganh="<?php echo $dt['tenNganh']; ?>"
                                 data-hocKi="<?php echo $dt['hocKi']; ?>"
                                 data-namHoc="<?php echo $dt['namHoc']; ?>">
                                 <i class="fa-solid fa-trash"></i>
                             </button>
+
+                            <form method="POST" action="quan-ly-do-an/dang-ki-do-an" style="margin-top:10px">
+                                <input type="hidden" name="maDT" value="<?php echo $dt['maDT']; ?>">
+                                <input type="hidden" name="tenDeTai" value="<?php echo $dt['tenDeTai']; ?>">
+                                <input type="hidden" name="moTa" value="<?php echo $dt['moTa']; ?>">
+                                <input type="hidden" name="maGiangVien" value="<?php echo $dt['maGiangVien']; ?>">
+                                <input type="hidden" name="maNganh" value="<?php echo $dt['maNganh']; ?>">
+                                <input type="hidden" name="hocKi" value="<?php echo $dt['hocKi']; ?>">
+                                <input type="hidden" name="namHoc" value="<?php echo $dt['namHoc']; ?>">
+                                <input type="hidden" name="maSV" value="<?php echo session()->get('maSV'); ?>">
+
+                                <button type="submit" class="btn btn-sm btn-success">
+                                    <i class="fa-solid fa-check"></i> Đăng Ký
+                                </button>
+                            </form>
                         </td>
+
                     </tr>
                 <?php endforeach; ?>
             <?php endif; ?>
@@ -150,8 +167,8 @@ Trang Chủ
                     </div>
 
                     <div class="mb-3">
-                        <label for="chonNganh" class="form-label">Ngành</label>
-                        <select id="chonNganh" name="maNganh" class="form-select" required>
+                        <label for="tenNganh" class="form-label">Ngành</label>
+                        <select id="tenNganh" name="maNganh" class="form-select" required>
                             <?php if ($nganh): ?>
                                 <?php foreach ($nganh as $n): ?>
                                     <option value="<?php echo $n['maNganh']; ?>"><?php echo $n['tenNganh']; ?></option>
@@ -160,17 +177,17 @@ Trang Chủ
                         </select>
                     </div>
 
-                    <?php
-                    $hocKihientai = isset($detai['hocKi']) ? $detai['hocKi'] : '1';
-                    ?>
+
                     <div class="mb-3">
-                        <label for="hocKiEdit" class="form-label">Học Kì</label>
-                        <select id="hocKiEdit" name="hocKi" class="form-select" required>
-                            <option value="1" <?= ($hocKihientai == '1') ? 'selected' : ''; ?>>1</option>
-                            <option value="2" <?= ($hocKihientai == '2') ? 'selected' : ''; ?>>2</option>
-                            <option value="Hè" <?= ($hocKihientai == 'Hè') ? 'selected' : ''; ?>>Hè</option>
+                        <label for="hocKi" class="form-label">Học Kì</label>
+                        <select id="hocKi" name="hocKi" class="form-select" required>
+                            <option value="null">Chọn học kỳ</option>
+                            <option value="1">Học Kỳ 1</option>
+                            <option value="2">Học Kỳ 2</option>
+                            <option value="Hè">Học kỳ hè</option>
                         </select>
                     </div>
+
 
                     <div class="mb-3">
                         <label for="namHoc" class="form-label">Năm Học</label>
@@ -223,8 +240,8 @@ Trang Chủ
                     </div>
 
                     <div class="mb-3">
-                        <label for="chonNganhEdit" class="form-label">Ngành</label>
-                        <select id="chonNganhEdit" name="maNganh" class="form-select" required>
+                        <label for="tenNganhEdit" class="form-label">Ngành</label>
+                        <select id="tenNganhEdit" name="maNganh" class="form-select" required>
                             <?php if ($nganh): ?>
                                 <?php foreach ($nganh as $n): ?>
                                     <option value="<?php echo $n['maNganh']; ?>"><?php echo $n['tenNganh']; ?></option>
@@ -233,18 +250,16 @@ Trang Chủ
                         </select>
                     </div>
 
-                    <?php
-                    $hocKihientai = isset($detai['hocKi']) ? $detai['hocKi'] : '1';
-                    ?>
+
                     <div class="mb-3">
                         <label for="hocKiEdit" class="form-label">Học Kì</label>
                         <select id="hocKiEdit" name="hocKi" class="form-select" required>
-                            <option value="1" <?= ($hocKihientai == '1') ? 'selected' : ''; ?>>1</option>
-                            <option value="2" <?= ($hocKihientai == '2') ? 'selected' : ''; ?>>2</option>
-                            <option value="Hè" <?= ($hocKihientai == 'Hè') ? 'selected' : ''; ?>>Hè</option>
+                            <option value="null">Chọn học kỳ</option>
+                            <option value="1">Học Kỳ 1</option>
+                            <option value="2">Học Kỳ 2</option>
+                            <option value="Hè">Học kỳ hè</option>
                         </select>
                     </div>
-
                     <div class="mb-3">
                         <label for="namHocEdit" class="form-label">Năm Học</label>
                         <select id="namHocEdit" name="namHoc" class="form-select" required>
@@ -253,7 +268,6 @@ Trang Chủ
                                     <option value="<?= $nh['namHoc']; ?>"><?= $nh['namHoc']; ?></option>
                                 <?php endforeach; ?>
                             <?php endif; ?>
-
                         </select>
                     </div>
 
@@ -326,6 +340,7 @@ Trang Chủ
                 const maDT = this.getAttribute('data-id');
                 const tenDeTai = this.getAttribute('data-tenDeTai');
                 const maGiangVien = this.getAttribute('data-maGiangVien');
+                const maNganh = this.getAttribute('data-maNganh');
                 const moTa = this.getAttribute('data-moTa');
                 const namHoc = this.getAttribute('data-namHoc');
                 const hocKi = this.getAttribute('data-hocKi');
@@ -333,6 +348,8 @@ Trang Chủ
                 const selectNganh = document.getElementById("tenNganhEdit");
                 const selectnamHoc = document.getElementById("namHocEdit");
                 const tenNganh = this.getAttribute('data-tenNganh');
+              
+
 
                 console.log(maDT);
                 console.log(tenDeTai);
@@ -345,12 +362,21 @@ Trang Chủ
                 document.getElementById('maDTEdit').value = maDT;
                 document.getElementById('tenDeTaiEdit').value = tenDeTai;
                 document.getElementById('tenGiangVienEdit').value = tenGiangVien;
+                document.getElementById('tenNganhEdit').value = tenNganh;
                 document.getElementById('moTaEdit').value = moTa;
                 document.getElementById('namHocEdit').value = namHoc;
+                document.getElementById('hocKiEdit').value = hocKi;
+              
 
 
                 for (let option of selectGiangVien.options) {
                     if (option.value == maGiangVien) {
+                        option.selected = true;
+                        break;
+                    }
+                }
+                for (let option of selectNganh.options) {
+                    if (option.value == maNganh) {
                         option.selected = true;
                         break;
                     }
@@ -374,6 +400,9 @@ Trang Chủ
                 const tenDeTai = this.getAttribute('data-tenDeTai');
                 const moTa = this.getAttribute('data-moTa');
                 const maGiangVien = this.getAttribute('data-maGiangVien');
+                const maNganh = this.getAttribute('data-maNganh');
+                const hocKi = this.getAttribute('data-hocKi');
+                
 
 
                 document.getElementById('maDTDelete').value = maDT;

@@ -37,12 +37,12 @@
                 <ul class="nav-group-items compact">
                     <li class="nav-item"><a class="nav-link" href="/quan-ly-khoa"><span class="nav-icon"><span
                                     class="nav-icon-bullet"></span></span> Quản Lý Khoa</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/quan-ly-bo-mon"><span class="nav-icon"><span
+                    <!-- <li class="nav-item"><a class="nav-link" href="/quan-ly-bo-mon"><span class="nav-icon"><span
                                     class="nav-icon-bullet"></span></span> Quản Lý Bộ Môn</a></li>
                     <li class="nav-item"><a class="nav-link" href="/quan-ly-nganh"><span class="nav-icon"><span
                                     class="nav-icon-bullet"></span></span> Quản Lý Ngành</a></li>
                     <li class="nav-item"><a class="nav-link" href="/quan-ly-lop"><span class="nav-icon"><span
-                                    class="nav-icon-bullet"></span></span> Quản Lý Lớp</a></li>
+                                    class="nav-icon-bullet"></span></span> Quản Lý Lớp</a></li> -->
 
                 </ul>
             </li>
@@ -54,8 +54,7 @@
                                     class="nav-icon-bullet"></span></span> Quản Lý Giảng Viên </a></li>
                     <li class="nav-item"><a class="nav-link" href="/quan-ly-sinh-vien"><span class="nav-icon"><span
                                     class="nav-icon-bullet"></span></span> Quản Lý Sinh Viên</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#"><span class="nav-icon"><span
-                                    class="nav-icon-bullet"></span></span> Quản Lý Cán Bộ Giảng Viên</a></li>
+
 
                 </ul>
             </li>
@@ -116,7 +115,7 @@
                 </nav> -->
             </div>
         </header>
-        <main class="content flex-grow-1">
+        <main class="content flex-grow-1 mb-4">
             <?= $this->renderSection("content") ?>
         </main>
         <footer class="footer px-4">

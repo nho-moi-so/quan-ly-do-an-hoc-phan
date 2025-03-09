@@ -14,14 +14,19 @@ class QuanLyDoAn extends BaseController
     {
         $DoAnModel = new DoAnModel();
         $DeTaiModel = new DeTaiModel();
+        $trangThai = $this->request->getGet('trangThai') ?? 1;
+
+        $data['trangThai'] = $trangThai;
 
         $data['doan'] = $DoAnModel->select('doan.*, detai.tenDeTai, sinhvien.maSV, giangvien.maGiangVien, 
-        userSV.hoTen as tenSinhVien, userGV.hoTen as tenGiangVien')
+        userSV.hoTen as tenSinhVien, userGV.hoTen as tenGiangVien, trangThai.name as trangThai')
             ->join('detai', 'detai.maDT = doan.maDT', 'left')
             ->join('sinhvien', 'sinhvien.maSV = doan.maSV', 'left')
             ->join('user as userSV', 'userSV.maUser = sinhvien.maUser', 'left')
             ->join('giangvien', 'giangvien.maGiangVien = doan.maGiangVien', 'left')
             ->join('user as userGV', 'userGV.maUser = giangvien.maUser', 'left')
+            ->join('trangThai', 'trangThai.id = doan.trangThai', 'left')
+            ->where('doan.trangThai', $trangThai)
             ->orderBy('sinhvien.maSV', 'DESC')
             ->findAll();
 
@@ -84,21 +89,22 @@ class QuanLyDoAn extends BaseController
         return redirect()->to('/quan-ly-do-an');
     }
 
-
-
     public function edit()
     {
         $DoAnModel = new DoAnModel();
 
         $maDA = $this->request->getPost('maDA');
-        $maDT = $this->request->getPost('maDT');
-        $maGiangVien = $this->request->getPost('maGiangVien');
+        // $maDT = $this->request->getPost('maDT');
+        // $maGiangVien = $this->request->getPost('maGiangVien');
         $maSV = $this->request->getPost('maSV');
         $diem = $this->request->getPost('diem');
-        $ngayNop = $this->request->getPost('ngayNop');
-        $trangThai = $this->request->getPost('trangThai');
+        // $ngayNop = $this->request->getPost('ngayNop');
+        $trangThaiDiem = $this->request->getPost('trangThaiDiem');
 
-        if (!$maDT || !$maGiangVien || !$maSV) {
+        // var_dump($maDA, $maSV,$diem,$trangThaiDiem);
+        // exit();
+
+        if (!$maDA || !$maSV) {
             session()->setFlashdata('message_type', 'error');
             session()->setFlashdata('message', 'Thiếu thông tin đề tài, giảng viên hoặc sinh viên!');
             return redirect()->to('/quan-ly-do-an');
@@ -115,16 +121,12 @@ class QuanLyDoAn extends BaseController
             }
 
             try {
-                $DoAnData = [
-                    'maDT' => $maDT,
-                    'maGiangVien' => $maGiangVien,
-                    'maSV' => $maSV,
-                    'diem' => $diem,
-                    'ngayNop' => $ngayNop,
-                    'trangThai' => $trangThai,
-                ];
+                $DoAnData = [];
+                if (!empty($maSV)) $DoAnData['maSV'] = $maSV;
+                if (!empty($diem)) $DoAnData['diem'] = $diem;
+                if (!empty($trangThaiDiem)) $DoAnData['trangThaiDiem'] = $trangThaiDiem;
 
-                // var_dump($maDT,$maGiangVien,$maSV,$diem,$ngayNop,$trangThai);
+                // var_dump($maDT,$maGiangVien,$maSV,$diem,$ngayNop,$trangThaiDiem);
                 // die();
                 // var_dump("Dữ liệu trước khi update:", $maDA, $DoAnData);
                 // die();
@@ -144,6 +146,7 @@ class QuanLyDoAn extends BaseController
 
         return redirect()->to('/quan-ly-do-an');
     }
+
     public function delete($id = null)
     {
         $UserModel = new UserModel();
@@ -174,6 +177,187 @@ class QuanLyDoAn extends BaseController
         } catch (\Exception $e) {
             session()->setFlashdata('message_type', 'error');
             session()->setFlashdata('message', 'Không thể xóa Sinh Viên vì đang được sử dụng!');
+        }
+
+        return redirect()->to('/quan-ly-do-an');
+    }
+
+    public function dangKidoan()
+    {
+        session()->set('maSV', 1);
+        $DoAnModel = new DoAnModel();
+
+        $maDT = trim($this->request->getPost('maDT'));
+        $maGiangVien = trim($this->request->getPost('maGiangVien'));
+        $maSV = trim($this->request->getPost('maSV'));
+        $trangThai = 1;
+        $thoigianDangKi = date("Y-m-d H:i:s");;
+
+        if (empty($maDT) || empty($maGiangVien) || empty($maSV)) {
+            session()->setFlashdata('message_type', 'error');
+            session()->setFlashdata('message', 'Vui lòng nhập đầy đủ thông tin!');
+            return redirect()->back();
+        }
+
+
+        $existing = $DoAnModel
+            ->where('maSV', $maSV)
+            ->whereNotIn('trangThai', [3])
+            ->countAllResults();
+        if ($existing > 0) {
+            session()->setFlashdata('message_type', 'error');
+            session()->setFlashdata('message', 'Bạn đã đăng ký một đề tài rồi!');
+            return redirect()->back();
+        }
+
+        $DoAnData = [
+            'maDT' => $maDT,
+            'maGiangVien' => $maGiangVien,
+            'maSV' => $maSV,
+            'trangThai' => $trangThai,
+            'thoigianDangKi' => $thoigianDangKi
+
+        ];
+
+        try {
+            if ($DoAnModel->insert($DoAnData)) {
+                session()->setFlashdata('message_type', 'success');
+                session()->setFlashdata('message', 'Đăng ký đề tài thành công!');
+            } else {
+                session()->setFlashdata('message_type', 'error');
+                session()->setFlashdata('message', 'Có lỗi xảy ra khi đăng ký!');
+            }
+        } catch (\Exception $e) {
+            echo "LỖI SQL: " . $e->getMessage();
+            die();
+        }
+
+        return redirect()->to('/quan-ly-do-an');
+    }
+
+    public function capNhatTrangThai()
+    {
+        $trangThai = 2;
+        $maDA = $this->request->getPost('maDA');
+        $DoAnModel = new DoAnModel();
+
+        if (!$maDA) {
+            return redirect()->back()->with('error', 'Không tìm thấy đồ án!');
+        }
+
+        try {
+            if ($DoAnModel->update($maDA, ['trangThai' => $trangThai])) {
+                session()->setFlashdata('message_type', 'success');
+                session()->setFlashdata('message', 'Cập Nhật Trạng Thái thành công!');
+            } else {
+                session()->setFlashdata('message_type', 'error');
+                session()->setFlashdata('message', 'Có lỗi xảy ra khi cập nhật!');
+            }
+        } catch (\Exception $e) {
+            echo "LỖI SQL: " . $e->getMessage();
+            die();
+        }
+        return redirect()->to('/quan-ly-do-an');
+    }
+
+    public function tuchoi()
+    {
+        $trangThai = 3;
+        $maDA = $this->request->getPost('maDA');
+        $DoAnModel = new DoAnModel();
+
+        if (!$maDA) {
+            return redirect()->back()->with('error', 'Không tìm thấy đồ án!');
+        }
+
+        try {
+            if ($DoAnModel->update($maDA, ['trangThai' => $trangThai])) {
+                session()->setFlashdata('message_type', 'success');
+                session()->setFlashdata('message', 'Cập nhật trạng thái thành công!');
+            } else {
+                session()->setFlashdata('message_type', 'error');
+                session()->setFlashdata('message', 'Có lỗi xảy ra khi cập nhật!');
+            }
+        } catch (\Exception $e) {
+            echo "LỖI SQL: " . $e->getMessage();
+            die();
+        }
+
+        return redirect()->to('/quan-ly-do-an');
+    }
+
+    public function huy()
+    {
+        $trangThai = 3;
+        $maDA = $this->request->getPost('maDA');
+        $DoAnModel = new DoAnModel();
+
+        if (!$maDA) {
+            return redirect()->back()->with('error', 'Không tìm thấy đồ án!');
+        }
+
+        try {
+            if ($DoAnModel->update($maDA, ['trangThai' => $trangThai])) {
+                session()->setFlashdata('message_type', 'success');
+                session()->setFlashdata('message', 'Cập nhật trạng thái thành công!');
+            } else {
+                session()->setFlashdata('message_type', 'error');
+                session()->setFlashdata('message', 'Có lỗi xảy ra khi cập nhật!');
+            }
+        } catch (\Exception $e) {
+            echo "LỖI SQL: " . $e->getMessage();
+            die();
+        }
+
+        return redirect()->to('/quan-ly-do-an');
+    }
+
+    public function chitiet($maDA)
+    {
+        $DoAnModel = new DoAnModel();
+        $SinhVienModel = new SinhVienModel();
+
+        $data['maDA'] = $maDA;
+        $SinhVienList = $SinhVienModel;
+
+        $data['chiTiet'] = $DoAnModel->where('maDA', $maDA)->first();
+
+        if (!$data['chiTiet']) {
+            // return redirect()->back()->with('error', 'Không tìm thấy đồ án!');
+        }
+        $doan = $DoAnModel
+            ->select('doan.maDA, doan.maDT, detai.tenDeTai, user.hoTen as tenGiangVien, doan.ngayNop')
+            ->join('giangvien', 'giangvien.maGiangVien = doan.maGiangVien', 'left')
+            ->join('user', 'user.maUser = giangvien.maUser', 'left')
+            ->join('detai', 'doan.maDT =detai.maDT', 'left')
+            ->where('doan.maDA', $maDA)
+            ->first();
+        // var_dump($doan);
+        // exit();
+
+
+        if (!$doan) {
+            return redirect()->to('/quan-ly-do-an')->with('message', 'Không tìm thấy đồ án!');
+        }
+
+        $data['sinhVienList'] = $SinhVienList
+            ->select('sinhvien.maSV, user.hoTen, user.maUser, doan.maDA, doan.diem, doan.trangThai, doan.trangThaiDiem')
+            ->join('user', 'user.maUser = sinhvien.maUser', 'left')
+            ->join('doan', 'doan.maSV = sinhvien.maSV', 'left')
+            ->where('doan.trangThai', 2)
+            ->where('doan.maDA', $maDA)
+            ->findAll();
+        $data['doan'] = $doan;
+
+        return view('quan-ly-do-an/chi-tiet-do-an', $data);
+    }
+
+    public function quaylai()
+    {
+        $quaylai = $this->request->getPost('quaylai');
+
+        if ($quaylai === 'cancel') {
+            return redirect()->to('/quan-ly-do-an');
         }
 
         return redirect()->to('/quan-ly-do-an');

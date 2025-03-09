@@ -13,19 +13,25 @@ $routes->post('quan-ly-khoa/edit-khoa', 'QuanLyKhoa::edit');
 $routes->get('quan-ly-khoa/delete-khoa/(:num)', 'QuanLyKhoa::delete/$1');
 
 // Bộ Môn
-$routes->get('/quan-ly-bo-mon', 'QuanLyBoMon::index');
+$routes->get('quan-ly-bo-mon/(:num)', 'QuanLyBoMon::index/$1');
+$routes->get('quan-ly-bo-mon', 'QuanLyBoMon::index');
+$routes->post('quan-ly-bo-mon/add-bo-mon/(:num)', 'QuanLyBoMon::add/$1');
 $routes->post('quan-ly-bo-mon/add-bo-mon', 'QuanLyBoMon::add');
 $routes->post('quan-ly-bo-mon/edit-bo-mon', 'QuanLyBoMon::edit');
 $routes->get('quan-ly-bo-mon/delete-bo-mon/(:num)', 'QuanLyBoMon::delete/$1');
 
 // Ngành
-$routes->get('/quan-ly-nganh', 'QuanLyNganh::index');
+$routes->get('quan-ly-nganh/(:num)', 'QuanLyNganh::index/$1');
+$routes->get('quan-ly-nganh', 'QuanLyNganh::index');
+$routes->post('quan-ly-nganh/add-nganh/(:num)', 'QuanLyNganh::add/$1');
 $routes->post('quan-ly-nganh/add-nganh', 'QuanLyNganh::add');
 $routes->post('quan-ly-nganh/edit-nganh', 'QuanLyNganh::edit');
 $routes->get('quan-ly-nganh/delete-nganh/(:num)', 'QuanLyNganh::delete/$1');
 
 //Lớp
+$routes->get('quan-ly-lop/(:num)', 'QuanLyLop::index/$1');
 $routes->get('/quan-ly-lop', 'QuanLyLop::index');
+$routes->post('quan-ly-lop/add-lop/(:num)', 'QuanLyLop::add/$1');
 $routes->post('quan-ly-lop/add-lop', 'QuanLyLop::add');
 $routes->post('quan-ly-lop/edit-lop', 'QuanLyLop::edit');
 $routes->get('quan-ly-lop/delete-lop/(:num)', 'QuanLyLop::delete/$1');
@@ -47,12 +53,22 @@ $routes->get('/quan-ly-de-tai', 'QuanLyDeTai::index');
 $routes->post('quan-ly-de-tai/add-de-tai', 'QuanLyDeTai::add');
 $routes->post('quan-ly-de-tai/edit-de-tai', 'QuanLyDeTai::edit');
 $routes->get('quan-ly-de-tai/delete-de-tai/(:num)', 'QuanLyDeTai::delete/$1');
+$routes->get('/quan-ly-de-tai/timkiem', 'QuanLyDeTai::timkiem');
+
 
 //Đồ Án
 $routes->get('/quan-ly-do-an', 'QuanLyDoAn::index');
 $routes->post('quan-ly-do-an/add-do-an', 'QuanLyDoAn::add');
 $routes->post('quan-ly-do-an/edit-do-an', 'QuanLyDoAn::edit');
 $routes->get('quan-ly-do-an/delete-do-an/(:num)', 'QuanLyDoAn::delete/$1');
+$routes->post('quan-ly-do-an/dang-ki-do-an', 'QuanLyDoAn::dangkidoan');
+$routes->post('quan-ly-do-an/cap-nhat-trang-thai', 'QuanLyDoAn::capnhatTrangThai');
+$routes->post('quan-ly-do-an/tu-choi', 'QuanLyDoAn::tuchoi');
+$routes->post('quan-ly-do-an/huy-dang-ki', 'QuanLyDoAn::huy');
+$routes->get('/quan-ly-do-an/chi-tiet-do-an/(:num)', 'QuanLyDoAn::chitiet/$1');
+$routes->post('quan-ly-do-an/luu', 'QuanLyDoAn::luu');
+$routes->post('quan-ly-do-an/quaylai', 'QuanLyDoAn::quaylai');
+
 
 if (file_exists(APPPATH . 'Config/' . ENVIRONMENT . '/Routes.php'))
 {

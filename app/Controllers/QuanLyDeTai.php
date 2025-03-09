@@ -4,15 +4,14 @@ namespace App\Controllers;
 
 use App\Models\DeTaiModel;
 use App\Models\GiangVienModel;
-use App\Models\UserModel;
 use App\Models\NganhModel;
-
 
 class QuanLyDeTai extends BaseController
 {
     public function index()
     {
         $DeTaiModel = new DeTaiModel();
+
         $data['detai'] = $DeTaiModel->select('detai.*, user.*, giangvien.*, nganh.tenNganh')
             ->join('giangvien', 'giangvien.maGiangVien = detai.maGiangVien', 'left')
             ->join('user', 'user.maUser = giangvien.maUser', 'left')
@@ -20,17 +19,35 @@ class QuanLyDeTai extends BaseController
             ->orderBy('detai.maDT', 'DESC')
             ->findAll();
 
-        $namHoc = $DeTaiModel->select('namHoc')->distinct()->findAll();
+        $data['giangvien'] = $DeTaiModel->getGiangVien();
+        $data['nganh'] = $DeTaiModel->getNganh();
+        $data['namHoc'] = $DeTaiModel->select('namHoc')->distinct()->findAll();
 
-        $UserModel = new UserModel();
-        $data['giangvien'] = $UserModel
-            ->select('user.hoTen, giangvien.maGiangVien')
-            ->join('giangvien', 'giangvien.maUser = user.maUser', 'left')
-            ->where('user.role', 'GiangVien')
-            ->orderBy('user.maUser', 'DESC')
-            ->findAll();
-        $NganhModel = new NganhModel();
-        $data['nganh'] = $NganhModel->orderBy('maNganh', 'DESC')->findAll();
+        $data['selectedMaNganh'] = null;
+        $data['selectedHocKi'] = null;
+        $data['selectedNamHoc'] = null;
+
+        return view('quan-ly-de-tai/index', $data);
+    }
+
+    public function timkiem()
+    {
+        $DeTaiModel = new DeTaiModel();
+
+        $maNganh = $this->request->getGet('maNganh') ?? 'null';
+        $hocKi = $this->request->getGet('hocKi');
+        $namHoc = $this->request->getGet('namHoc');
+
+        $data['detai'] = $DeTaiModel->timKiemDeTai($maNganh, $hocKi, $namHoc);
+
+        $data['giangvien'] = $DeTaiModel->getGiangVien();
+        $data['nganh'] = $DeTaiModel->getNganh();
+        $data['namHoc'] = $DeTaiModel->select('namHoc')->distinct()->findAll();
+
+        $data['selectedMaNganh'] = $maNganh;
+        $data['selectedHocKi'] = $hocKi;
+        $data['selectedNamHoc'] = $namHoc;
+
         return view('quan-ly-de-tai/index', $data);
     }
 
@@ -41,7 +58,7 @@ class QuanLyDeTai extends BaseController
         $tenDeTai = trim($this->request->getPost('tenDeTai'));
         $moTa = trim($this->request->getPost('moTa'));
         $maGiangVien = trim($this->request->getPost('maGiangVien'));
-        $maNganh = $this->request->getVar('maNganh');
+        $maNganh = trim($this->request->getPost('maNganh'));
         $namHoc = trim($this->request->getPost('namHoc'));
         $hocKi = trim($this->request->getPost('hocKi'));
 
@@ -49,7 +66,7 @@ class QuanLyDeTai extends BaseController
         // die();
 
 
-        if (empty($tenDeTai) || empty($moTa) || empty($maGiangVien) || empty($maNganh) || empty($namHoc)) {
+        if (empty($tenDeTai) || empty($moTa) || empty($maGiangVien) || empty($maNganh) || empty($namHoc) || empty($hocKi)) {
             session()->setFlashdata('message_type', 'error');
             session()->setFlashdata('message', 'Vui lòng nhập đầy đủ thông tin!');
             return redirect()->back();
@@ -63,7 +80,7 @@ class QuanLyDeTai extends BaseController
             'namHoc' => $namHoc,
             'hocKi' => $hocKi,
         ];
-       
+
 
         try {
 
@@ -85,6 +102,7 @@ class QuanLyDeTai extends BaseController
 
     public function edit()
     {
+        $NganhModel = new NganhModel();
         $DeTaiModel = new DeTaiModel();
         $GiangVienModel = new GiangVienModel();
 
@@ -126,7 +144,15 @@ class QuanLyDeTai extends BaseController
                 session()->setFlashdata('message', 'Tên đề tài không được để trống!');
                 return redirect()->back();
             }
+            if (!empty($maNganh)) {
+                $nganh = $NganhModel->find($maNganh);
 
+                if (!$nganh) {
+                    session()->setFlashdata('message_type', 'error');
+                    session()->setFlashdata('message', 'Mã Ngành không hợp lệ!');
+                    return redirect()->back();
+                }
+            }
 
             try {
                 $DeTaiData = [

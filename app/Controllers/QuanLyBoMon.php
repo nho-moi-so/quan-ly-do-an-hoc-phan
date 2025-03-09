@@ -7,42 +7,61 @@ use App\Models\KhoaModel;
 
 class QuanLyBoMon extends BaseController
 {
-    public function index(): string
+    public function index($maKhoa = null): string
     {
         $BoMonModel = new BoMonModel();
-
-        $data['bomon'] = $BoMonModel->select('bomon.*, khoa.tenKhoa, khoa.maKhoa')
-            ->join('khoa', 'khoa.maKhoa = bomon.maKhoa', 'left')
-            ->orderBy('maBoMon', 'DESC')
-            ->findAll();
-
         $KhoaModel = new KhoaModel();
+
+        if (!empty($maKhoa)) {
+
+            $data['bomon'] = $BoMonModel->select('bomon.*, khoa.tenKhoa, khoa.maKhoa')
+                ->join('khoa', 'khoa.maKhoa = bomon.maKhoa', 'inner')
+                ->where('bomon.maKhoa', intval($maKhoa))
+                ->orderBy('maBoMon', 'DESC')
+                ->findAll();
+        } else {
+
+            $data['bomon'] = $BoMonModel->select('bomon.*, khoa.tenKhoa, khoa.maKhoa')
+                ->join('khoa', 'khoa.maKhoa = bomon.maKhoa', 'inner')
+                ->orderBy('maBoMon', 'DESC')
+                ->findAll();
+        }
+
+
+        $data['maKhoa'] = $maKhoa;
         $data['khoa'] = $KhoaModel->orderBy('maKhoa', 'DESC')->findAll();
 
         return view('quan-ly-bo-mon/index', $data);
     }
 
-    public function add()
+
+    public function add($maKhoa = null)
     {
         $BoMonModel = new BoMonModel();
-
-        // Lấy dữ liệu từ form
+    
+        if ($maKhoa === null) {
+            $maKhoa = $this->request->getVar('maKhoa');
+        }
+    
+        if (empty($maKhoa)) {
+            session()->setFlashdata('message_type', 'error');
+            session()->setFlashdata('message', 'Không xác định được khoa!');
+            return redirect()->back();
+        }
+    
         $tenBoMon = $this->request->getVar('tenBoMon');
-        $maKhoa = $this->request->getVar('maKhoa');
-
-        // Kiểm tra nếu tên khoa bị trống
+    
         if (empty($tenBoMon)) {
             session()->setFlashdata('message_type', 'error');
             session()->setFlashdata('message', 'Tên bộ môn không được để trống!');
             return redirect()->back();
         }
-
-        // Chuẩn bị dữ liệu
+    
         $data = [
             'tenBoMon' => $tenBoMon,
             'maKhoa' => $maKhoa,
         ];
-
+    
         try {
             if ($BoMonModel->insert($data)) {
                 session()->setFlashdata('message_type', 'success');
@@ -55,9 +74,11 @@ class QuanLyBoMon extends BaseController
             session()->setFlashdata('message_type', 'error');
             session()->setFlashdata('message', 'Lỗi: ' . $e->getMessage());
         }
-
-        return redirect()->to('/quan-ly-bo-mon');
+    
+        return redirect()->to('quan-ly-bo-mon/' . $maKhoa);
     }
+    
+
 
     public function edit()
     {
@@ -74,28 +95,29 @@ class QuanLyBoMon extends BaseController
             $tenBoMon = trim($this->request->getPost('tenBoMon'));
             $maKhoa = trim($this->request->getPost('maKhoa'));
 
-            // Kiểm tra nếu dữ liệu bị bỏ trống
-            if (empty($tenBoMon) || empty($maKhoa)) {
+            if (empty($tenBoMon)) {
                 session()->setFlashdata('message_type', 'error');
                 session()->setFlashdata('message', 'Tên bộ môn và khoa không được để trống!');
                 return redirect()->back();
             }
 
-            $curentBoMon = $BoMonModel->find($id);
+            $currentBoMon = $BoMonModel->find($id);
 
-            if (!$curentBoMon) {
+            if (!$currentBoMon) {
                 session()->setFlashdata('message_type', 'error');
                 session()->setFlashdata('message', 'Bộ môn không tồn tại!');
                 return redirect()->to('/quan-ly-bo-mon');
             }
 
-            // Dữ liệu cần cập nhật
+            if (empty($maKhoa)) {
+                $maKhoa = $currentBoMon['maKhoa'];
+            }
+    
             $data = [
                 'tenBoMon' => $tenBoMon,
                 'maKhoa' => $maKhoa,
             ];
 
-            // Cập nhật và kiểm tra kết quả
             if ($BoMonModel->update($id, $data)) {
                 session()->setFlashdata('message_type', 'success');
                 session()->setFlashdata('message', 'Cập nhật bộ môn thành công!');
@@ -105,7 +127,7 @@ class QuanLyBoMon extends BaseController
             }
         }
 
-        return redirect()->to('/quan-ly-bo-mon');
+        return redirect()->to('quan-ly-bo-mon/'. $maKhoa);
     }
 
     public function delete($id = null)
@@ -125,6 +147,8 @@ class QuanLyBoMon extends BaseController
             session()->setFlashdata('message', 'Bộ môn không tồn tại!');
             return redirect()->to('/quan-ly-bo-mon');
         }
+        
+        $maKhoa = $curentBoMon['maKhoa']; 
 
         try {
             if ($BoMonModel->delete($id)) {
@@ -140,6 +164,6 @@ class QuanLyBoMon extends BaseController
             session()->setFlashdata('message', 'Không thể xóa bộ môn vì đang được sử dụng!');
         }
 
-        return redirect()->to('/quan-ly-bo-mon');
+        return redirect()->to('quan-ly-bo-mon/'.$maKhoa);
     }
 }

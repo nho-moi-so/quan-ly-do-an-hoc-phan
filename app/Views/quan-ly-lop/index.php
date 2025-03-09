@@ -23,7 +23,6 @@ Trang Chủ
             <tr>
                 <th scope="col">ID</th>
                 <th scope="col">Tên Lớp</th>
-                <th scope="col">Tên Ngành</th>
                 <th scope="col">Hành Động</th>
             </tr>
         </thead>
@@ -33,12 +32,10 @@ Trang Chủ
                     <tr>
                         <th scope="row"><?php echo $l['maLop']; ?></th>
                         <td><?php echo $l['tenLop']; ?></td>
-                        <td><?php echo $l['tenNganh']; ?></td>
                         <td>
                             <button class="btn btn-sm btn-primary" data-coreui-toggle="modal" data-coreui-target="#editLopModal"
                                 data-id="<?php echo $l['maLop']; ?>"
-                                data-tenLop="<?php echo $l['tenLop']; ?>"
-                                data-tenNganh="<?php echo $l['tenNganh']; ?>"> <i class="fa-solid fa-pen"></i>
+                                data-tenLop="<?php echo $l['tenLop']; ?>"> <i class="fa-solid fa-pen"></i>
                             </button>
                             <button class="btn btn-sm btn-danger text-light"
                                 data-coreui-toggle="modal"
@@ -66,18 +63,12 @@ Trang Chủ
                 <button type="button" class="btn-close" data-coreui-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form action="<?= base_url('quan-ly-lop/add-lop') ?>" method="POST">
+                <form action="<?= base_url('quan-ly-lop/add-lop/') ?>" method="POST">
+                <input type="hidden" name="maNganh" value="<?= $maNganh ?>"> 
                     <div class="mb-3">
                         <label for="tenLop" class="form-label">Tên Lớp</label>
                         <input type="text" class="form-control" id="tenLop" name="tenLop" required>
-                        <label for="chonNganh" class="form-label">Ngành</label>
-                        <select id="chonNganh" name="maNganh" class="form-select" required>
-                            <?php if ($nganh): ?>
-                                <?php foreach ($nganh as $n): ?>
-                                    <option value="<?php echo $n['maNganh']; ?>"><?php echo $n['tenNganh']; ?></option>
-                                <?php endforeach; ?>
-                            <?php endif; ?>
-                        </select>
+                       
                     </div>
                     <div class="d-flex align-items-center justify-content-end gap-2">
                         <button type="button" class="btn btn-secondary" data-coreui-dismiss="modal">Đóng</button>
@@ -108,16 +99,7 @@ Trang Chủ
                         <label for="tenLopEdit" class="form-label">Tên Lớp</label>
                         <input type="text" class="form-control" id="tenLopEdit" name="tenLop" required>
                     </div>
-                    <div class="mb-3">
-                        <label for="chonNganhEdit" class="form-label">Ngành</label>
-                        <select id="chonNganhEdit" name="maNganh" class="form-select" required>
-                            <?php if ($nganh): ?>
-                                <?php foreach ($nganh as $n): ?>
-                                    <option value="<?php echo $n['maNganh']; ?>"><?php echo $n['tenNganh']; ?></option>
-                                <?php endforeach; ?>
-                            <?php endif; ?>
-                        </select>
-                    </div>
+                    
                     <div class="d-flex align-items-center justify-content-end gap-2">
                         <button type="button" class="btn btn-secondary" data-coreui-dismiss="modal">Đóng</button>
                         <button type="submit" class="btn btn-primary">Lưu</button>
@@ -185,15 +167,15 @@ Trang Chủ
             button.addEventListener('click', function() {
                 const maLop = this.getAttribute('data-id');
                 const tenLop = this.getAttribute('data-tenLop');
-                const tenNganh = this.getAttribute('data-tenNganh');
+           
 
                 console.log(maLop);
                 console.log(tenLop);
-                console.log(tenNganh);
+             
 
                 document.getElementById('maLop').value = maLop;
                 document.getElementById('tenLopEdit').value = tenLop;
-                document.getElementById('tenNganhEdit').value = tenNganh;
+               
             });
         });
 

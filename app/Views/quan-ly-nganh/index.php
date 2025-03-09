@@ -23,7 +23,6 @@ Trang Chủ
             <tr>
                 <th scope="col">ID</th>
                 <th scope="col">Tên Ngành</th>
-                <th scope="col">Tên Khoa</th>
                 <th scope="col">Hành Động</th>
             </tr>
         </thead>
@@ -33,12 +32,10 @@ Trang Chủ
                     <tr>
                         <th scope="row"><?php echo $n['maNganh']; ?></th>
                         <td><?php echo $n['tenNganh']; ?></td>
-                        <td><?php echo $n['tenKhoa']; ?></td>
                         <td>
                             <button class="btn btn-sm btn-primary" data-coreui-toggle="modal" data-coreui-target="#editNganhModal"
                                 data-id="<?php echo $n['maNganh']; ?>"
-                                data-tenNganh="<?php echo $n['tenNganh']; ?>"
-                                data-tenKhoa="<?php echo $n['tenKhoa']; ?>"> <i class="fa-solid fa-pen"></i>
+                                data-tenNganh="<?php echo $n['tenNganh']; ?>"> <i class="fa-solid fa-pen"></i>
                             </button>
                             <button class="btn btn-sm btn-danger text-light"
                                 data-coreui-toggle="modal"
@@ -47,6 +44,10 @@ Trang Chủ
                                 data-tenNganh="<?php echo $n['tenNganh']; ?>">
                                 <i class="fa-solid fa-trash"></i>
                             </button>
+
+                            <a href="<?= base_url('quan-ly-lop/' . $n['maNganh']) ?>" class="btn btn-sm btn-success" style="background-color:rgb(53, 65, 157); color: white;">
+                                <i class="fa-solid fa-eye"></i> Xem Lớp
+                            </a>
                         </td>
                     </tr>
                 <?php endforeach; ?>
@@ -67,17 +68,10 @@ Trang Chủ
             </div>
             <div class="modal-body">
                 <form action="<?= base_url('quan-ly-nganh/add-nganh') ?>" method="POST">
+                <input type="hidden" name="maKhoa" value="<?= $maKhoa ?? '' ?>"> 
                     <div class="mb-3">
                         <label for="tenNganh" class="form-label">Tên Ngành</label>
                         <input type="text" class="form-control" id="tenNganh" name="tenNganh" required>
-                        <label for="chonKhoa" class="form-label">Khoa</label>
-                        <select id="chonKhoa" name="maKhoa" class="form-select" required>
-                            <?php if ($khoa): ?>
-                                <?php foreach ($khoa as $k): ?>
-                                    <option value="<?php echo $k['maKhoa']; ?>"><?php echo $k['tenKhoa']; ?></option>
-                                <?php endforeach; ?>
-                            <?php endif; ?>
-                        </select>
                     </div>
                     <div class="d-flex align-items-center justify-content-end gap-2">
                         <button type="button" class="btn btn-secondary" data-coreui-dismiss="modal">Đóng</button>
@@ -108,16 +102,7 @@ Trang Chủ
                         <label for="tenNganhEdit" class="form-label">Tên Ngành</label>
                         <input type="text" class="form-control" id="tenNganhEdit" name="tenNganh" required>
                     </div>
-                    <div class="mb-3">
-                        <label for="chonKhoaEdit" class="form-label">Khoa</label>
-                        <select id="chonKhoaEdit" name="maKhoa" class="form-select" required>
-                            <?php if ($khoa): ?>
-                                <?php foreach ($khoa as $k): ?>
-                                    <option value="<?php echo $k['maKhoa']; ?>"><?php echo $k['tenKhoa']; ?></option>
-                                <?php endforeach; ?>
-                            <?php endif; ?>
-                        </select>
-                    </div>
+
                     <div class="d-flex align-items-center justify-content-end gap-2">
                         <button type="button" class="btn btn-secondary" data-coreui-dismiss="modal">Đóng</button>
                         <button type="submit" class="btn btn-primary">Lưu</button>
@@ -185,15 +170,14 @@ Trang Chủ
             button.addEventListener('click', function() {
                 const maNganh = this.getAttribute('data-id');
                 const tenNganh = this.getAttribute('data-tenNganh');
-                const tenKhoa = this.getAttribute('data-tenKhoa');
 
                 console.log(maNganh);
                 console.log(tenNganh);
-                console.log(tenKhoa);
+
 
                 document.getElementById('maNganh').value = maNganh;
                 document.getElementById('tenNganhEdit').value = tenNganh;
-                document.getElementById('tenKhoaEdit').value = tenKhoa;
+
             });
         });
 

@@ -8,5 +8,5 @@ class DoAnModel extends Model
 
     protected $primaryKey = 'maDA';
     
-    protected $allowedFields = ['maDT','maGiangVien','maSV','diem','ngayNop', 'trangThai'];
+    protected $allowedFields = ['maDT','maGiangVien','maSV','diem','ngayNop', 'trangThaiDiem', 'trangThai','thoigianDangKi'];
 }

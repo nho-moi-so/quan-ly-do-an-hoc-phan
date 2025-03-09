@@ -46,7 +46,14 @@ Trang Chủ
                 data-tenKhoa="<?php echo $k['tenKhoa']; ?>">
                 <i class="fa-solid fa-trash"></i>
               </button>
+              <a href="<?= base_url('quan-ly-bo-mon/' . $k['maKhoa']) ?>" class="btn btn-sm btn-success" style="background-color:rgb(53, 65, 157); color: white;">
+                <i class="fa-solid fa-eye"></i> Xem Bộ Môn
+              </a>
+              <a href="<?= base_url('quan-ly-nganh/' . $k['maKhoa']) ?>" class="btn btn-sm btn-success" style="background-color:rgb(53, 65, 157); color: white;">
+                <i class="fa-solid fa-eye"></i> Xem Ngành
+              </a>
             </td>
+           
           </tr>
         <?php endforeach; ?>
       <?php endif; ?>

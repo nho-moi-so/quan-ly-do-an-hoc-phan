@@ -7,39 +7,60 @@ use App\Models\NganhModel;
 
 class QuanLyLop extends BaseController
 {
-    public function index()
+    public function index($maNganh = null):string
     {
         $LopModel = new LopModel();
-        $data['lop'] = $LopModel->select('lop.*, nganh.tenNganh, nganh.maNganh')
-        ->join('nganh', 'nganh.maNganh = lop.maNganh', 'left')->orderBy('maLop', 'DESC')->findAll();
         $NganhModel = new NganhModel();
+
+        if (!empty($maNganh)) {
+            $data['lop'] = $LopModel->select('lop.*, nganh.tenNganh, nganh.maNganh')
+                ->join('nganh', 'nganh.maNganh = lop.maNganh', 'inner')
+                ->where('lop.maNganh', intval($maNganh))
+                ->orderBy('nganh.maNganh', 'DESC') 
+                ->findAll();
+        } else {
+            $data['lop'] = $LopModel->select('lop.*, nganh.tenNganh, nganh.maNganh')
+                ->join('nganh', 'nganh.maNganh = lop.maNganh', 'inner')
+                ->orderBy('nganh.maNganh', 'DESC')
+                ->findAll();
+        }
+
+        $data['maNganh'] = $maNganh;
         $data['nganh'] = $NganhModel->orderBy('maNganh', 'DESC')->findAll();
         return view('quan-ly-lop/index', $data);
     }
 
-    public function add()
+    public function add($maNganh = null)
     {
         $LopModel = new LopModel();
-
-        $tenLop = $this->request->getVar('tenLop');
-        $maNganh = $this->request->getVar('maNganh');
-        
-        if (empty($tenLop)) {
+    
+        if ($maNganh === null) {
+            $maNganh = $this->request->getVar('maNganh');
+        }
+       
+        if (empty($maNganh)) {
             session()->setFlashdata('message_type', 'error');
-            session()->setFlashdata('message', 'Tên lớp không được để trống!');
+            session()->setFlashdata('message', 'Không xác định được khoa!');
             return redirect()->back();
         }
-
+    
+        $tenLop = $this->request->getVar('tenLop');
+    
+        if (empty($tenLop)) {
+            session()->setFlashdata('message_type', 'error');
+            session()->setFlashdata('message', 'Tên Lớp không được để trống!');
+            return redirect()->back();
+        }
+    
         $data = [
             'tenLop' => $tenLop,
             'maNganh' => $maNganh,
-            
         ];
-
+    
         try {
             if ($LopModel->insert($data)) {
                 session()->setFlashdata('message_type', 'success');
-                session()->setFlashdata('message', 'Thêm lớp thành công!');
+                session()->setFlashdata('message', 'Thêm Lớp thành công!');
             } else {
                 session()->setFlashdata('message_type', 'error');
                 session()->setFlashdata('message', 'Có lỗi xảy ra, vui lòng thử lại!');
@@ -48,8 +69,8 @@ class QuanLyLop extends BaseController
             session()->setFlashdata('message_type', 'error');
             session()->setFlashdata('message', 'Lỗi: ' . $e->getMessage());
         }
-
-        return redirect()->to('/quan-ly-lop');
+    
+        return redirect()->to('quan-ly-lop/' . $maNganh);
     }
 
 
@@ -57,37 +78,40 @@ class QuanLyLop extends BaseController
     {
         $LopModel = new LopModel();
         $id = $this->request->getPost('maLop');
-
+    
         if (!$id) {
             session()->setFlashdata('message_type', 'error');
             session()->setFlashdata('message', 'Lớp không tồn tại!');
             return redirect()->to('/quan-ly-lop');
         }
-
+    
         if ($this->request->getMethod() === 'POST') {
             $tenLop = trim($this->request->getPost('tenLop'));
             $maNganh = trim($this->request->getPost('maNganh'));
-           
+    
             if (empty($tenLop)) {
                 session()->setFlashdata('message_type', 'error');
                 session()->setFlashdata('message', 'Tên Lớp không được để trống!');
                 return redirect()->back();
             }
-
-            $curentLop = $LopModel->find($id);
-
-            if (!$curentLop) {
+    
+          
+            $currentLop = $LopModel->find($id);
+            if (!$currentLop) {
                 session()->setFlashdata('message_type', 'error');
                 session()->setFlashdata('message', 'Lớp không tồn tại!');
                 return redirect()->to('/quan-ly-lop');
             }
-
+    
+            if (empty($maNganh)) {
+                $maNganh = $currentLop['maNganh'];
+            }
+    
             $data = [
                 'tenLop' => $tenLop,
                 'maNganh' => $maNganh,
-               
             ];
-
+    
             if ($LopModel->update($id, $data)) {
                 session()->setFlashdata('message_type', 'success');
                 session()->setFlashdata('message', 'Cập nhật lớp thành công!');
@@ -96,9 +120,10 @@ class QuanLyLop extends BaseController
                 session()->setFlashdata('message', 'Có lỗi xảy ra, vui lòng thử lại!');
             }
         }
-
-        return redirect()->to('/quan-ly-lop');
+    
+        return redirect()->to('quan-ly-lop/' . $maNganh);
     }
+    
 
     public function delete($id = null)
     {
@@ -117,6 +142,7 @@ class QuanLyLop extends BaseController
             session()->setFlashdata('message', 'Lớp không tồn tại!');
             return redirect()->to('/quan-ly-lop');
         }
+        $maNganh = $curentLop['maNganh']; 
 
         try {
             if ($LopModel->delete($id)) {
@@ -131,6 +157,6 @@ class QuanLyLop extends BaseController
             session()->setFlashdata('message', 'Không thể xóa lớp vì đang được sử dụng!');
         }
 
-        return redirect()->to('/quan-ly-lop');
+        return redirect()->to('quan-ly-lop/'.$maNganh);
     }
 }

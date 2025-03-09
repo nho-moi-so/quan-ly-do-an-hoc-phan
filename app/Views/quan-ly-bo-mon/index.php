@@ -17,12 +17,13 @@ Quản Lý Bộ Môn
 </div>
 
 <div class="container border-top pt-4">
+<h3>Danh sách Bộ Môn <?= !empty($maKhoa) ? 'của ' . array_column($khoa, 'tenKhoa', 'maKhoa')[$maKhoa] : '' ?></h3>
+
   <table class="table table-striped">
     <thead>
       <tr>
         <th scope="col">ID</th>
         <th scope="col">Tên Bộ Môn</th>
-        <th scope="col">Tên Khoa</th>
         <th scope="col">Hành Động</th>
       </tr>
     </thead>
@@ -32,15 +33,13 @@ Quản Lý Bộ Môn
           <tr>
             <th scope="row"><?php echo $bm['maBoMon']; ?></th>
             <td><?php echo $bm['tenBoMon']; ?></td>
-            <td><?php echo $bm['tenKhoa']; ?></td>
             <td>
               <button class="btn btn-sm btn-primary"
                 data-coreui-toggle="modal"
                 data-coreui-target="#editBoMonModal"
                 data-id="<?php echo $bm['maBoMon']; ?>"
                 data-tenBoMon="<?php echo $bm['tenBoMon']; ?>"
-                data-maKhoa="<?php echo $bm['maKhoa']; ?>"
-                data-tenKhoa="<?php echo $bm['tenKhoa']; ?>"><i class="fa-solid fa-pen"></i>
+                ><i class="fa-solid fa-pen"></i>
               </button>
               <button class="btn btn-sm btn-danger text-light"
                 data-coreui-toggle="modal"
@@ -66,17 +65,10 @@ Quản Lý Bộ Môn
       </div>
       <div class="modal-body">
         <form action="<?= base_url('quan-ly-bo-mon/add-bo-mon') ?>" method="POST">
+        <input type="hidden" name="maKhoa" value="<?= $maKhoa ?>"> 
           <div class="mb-3">
             <label for="tenBoMon" class="form-label">Tên Bộ Môn</label>
             <input type="text" class="form-control" id="tenBoMon" name="tenBoMon" placeholder="Nhập tên bộ môn" required>
-            <label for="chonKhoa" class="form-label">Khoa</label>
-            <select id="chonKhoa" name="maKhoa" class="form-select" required>
-              <?php if ($khoa): ?>
-                <?php foreach ($khoa as $k): ?>
-                  <option value="<?php echo $k['maKhoa']; ?>"><?php echo $k['tenKhoa']; ?></option>
-                <?php endforeach; ?>
-              <?php endif; ?>
-            </select>
           </div>
           <div class="d-flex align-items-center justify-content-end gap-2">
             <button type="button" class="btn btn-secondary" data-coreui-dismiss="modal">Đóng</button>
@@ -101,21 +93,13 @@ Quản Lý Bộ Môn
       </div>
       <div class="modal-body">
         <form id="editBoMonForm" method="POST" action="<?= base_url('quan-ly-bo-mon/edit-bo-mon') ?>">
+
           <input type="hidden" name="maBoMon" id="maBoMon" value="">
           <div class="mb-3">
             <label for="tenBoMonEdit" class="form-label">Tên Bộ Môn</label>
             <input type="text" class="form-control" id="tenBoMonEdit" name="tenBoMon" required>
           </div>
-          <div class="mb-3">
-            <label for="chonKhoaEdit" class="form-label">Khoa</label>
-            <select id="chonKhoaEdit" name="maKhoa" class="form-select" required>
-              <?php if ($khoa): ?>
-                <?php foreach ($khoa as $k): ?>
-                  <option value="<?php echo $k['maKhoa']; ?>"><?php echo $k['tenKhoa']; ?></option>
-                <?php endforeach; ?>
-              <?php endif; ?>
-            </select>
-          </div>
+          
           <div class="d-flex align-items-center justify-content-end gap-2">
             <button type="button" class="btn btn-secondary" data-coreui-dismiss="modal">Đóng</button>
             <button type="submit" class="btn btn-primary">Lưu</button>

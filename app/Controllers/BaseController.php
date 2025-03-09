@@ -50,9 +50,10 @@ abstract class BaseController extends Controller
     {
         // Do Not Edit This Line
         parent::initController($request, $response, $logger);
-
+        
         // Preload any models, libraries, etc, here.
-
+        
+        date_default_timezone_set('Asia/Ho_Chi_Minh');
         // E.g.: $this->session = service('session');
     }
 }

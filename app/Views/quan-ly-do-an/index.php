@@ -16,21 +16,18 @@ Trang Chủ
         </div>
     </div>
 </div>
-<!-- <li class="nav-group">
-    <ul class="nav-group-items compact">
-        <li class="nav-item"><a class="nav-link" href="#"><span class="nav-icon"><span
-                        class="nav-icon-bullet"></span></span> Đồ Án 1 </a></li>
-        <li class="nav-item"><a class="nav-link" href="#"><span class="nav-icon"><span
-                        class="nav-icon-bullet"></span></span> Đồ Án 2</a></li>
-        <li class="nav-item"><a class="nav-link" href="#"><span class="nav-icon"><span
-                        class="nav-icon-bullet"></span></span> Đồ Án 3</a></li>
-        <li class="nav-item"><a class="nav-link" href="#"><span class="nav-icon"><span
-                        class="nav-icon-bullet"></span></span> Đồ Án 4</a></li>
-        <li class="nav-item"><a class="nav-link" href="#"><span class="nav-icon"><span
-                        class="nav-icon-bullet"></span></span> Đồ Án Tốt Nghiệp</a></li>
 
-    </ul>
-</li> -->
+<ul class="nav nav-tabs">
+    <li class="nav-item">
+        <a class="nav-link <?= $trangThai == 1 ? 'active' : '' ?>" href="/quan-ly-do-an">Đang Đợi Duyệt</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link <?= $trangThai == 2 ? 'active' : '' ?>" href="/quan-ly-do-an?trangThai=2">Đã Duyệt</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link <?= $trangThai == 3 ? 'active' : '' ?>" href="/quan-ly-do-an?trangThai=3">Đã Hủy</a>
+    </li>
+</ul>
 
 <div class="container border-top pt-4">
     <table class="table table-striped">
@@ -42,11 +39,9 @@ Trang Chủ
                 <th scope="col">Sinh Viên Thực Hiện</th>
                 <th scope="col">Giảng Viên Hướng Dẫn</th>
                 <!-- <th scope="col">Lớp</th> -->
-                <th scope="col">Điểm</th>
-                <th scope="col">Ngày Nộp</th>
                 <th scope="col">Trạng Thái</th>
+                <th scope="col">Thời Gian Đăng Ký</th>
                 <th scope="col">Hoạt Động</th>
-
             </tr>
         </thead>
         <tbody>
@@ -57,35 +52,33 @@ Trang Chủ
                         <td><?php echo $da['tenDeTai']; ?></td>
                         <td><?php echo $da['tenSinhVien'] ?? 'N/A'; ?></td>
                         <td><?php echo $da['tenGiangVien'] ?? 'N/A'; ?></td>
-                        <td><?php echo $da['diem']; ?></td>
-                        <td><?php echo $da['ngayNop']; ?></td>
                         <td><?php echo $da['trangThai']; ?></td>
-
+                        <td><?php echo $da['thoigianDangKi']; ?></td>
                         <td>
-                            <button class="btn btn-sm btn-primary" data-coreui-toggle="modal" data-coreui-target="#editDoAnModal"
-                                data-id="<?php echo $da['maDA']; ?>"
-                                data-maDT="<?php echo $da['maDT']; ?>"
-                                data-tenDeTai="<?php echo $da['tenDeTai']; ?>"
-                                data-maSV="<?php echo $da['maSV']; ?>"
-                                data-tenSinhVien="<?php echo $da['tenSinhVien']; ?>"
-                                data-maGiangVien="<?php echo $da['maGiangVien']; ?>"
-                                data-tenGiangVien="<?php echo $da['tenGiangVien']; ?>"
-                                data-diem="<?php echo $da['diem'] ?>"
-                                data-ngayNop="<?php echo $da['ngayNop']; ?>"
-                                data-trangThai="<?php echo $da['trangThai'] ?>"> <i class="fa-solid fa-pen"></i>
-                            </button>
-                            <button class="btn btn-sm btn-danger text-light"
-                                data-coreui-toggle="modal"
-                                data-coreui-target="#deleteDoAnModal"
-                                data-id="<?php echo $da['maDA']; ?>"
-                                data-maDT="<?php echo $da['maDT']; ?>"
-                                data-tenDeTai="<?php echo $da['tenDeTai']; ?>"
-                                data-maSV="<?php echo $da['maSV']; ?>"
-                                data-tenSinhVien="<?php echo $da['tenSinhVien']; ?>"
-                                data-maGiangVien="<?php echo $da['maGiangVien']; ?>"
-                                data-tenGiangVien="<?php echo $da['tenGiangVien']; ?>">
-                                <i class="fa-solid fa-trash"></i>
-                            </button>
+                            <form method="POST" action="quan-ly-do-an/cap-nhat-trang-thai">
+                                <input type="hidden" name="maDA" value="<?php echo $da['maDA']; ?>">
+                                <button type="submit" class="btn btn-sm btn-success">
+                                    <i class="fa-solid fa-check"></i> Đồng Ý
+                                </button>
+                            </form>
+                            <form method="POST" action="quan-ly-do-an/tu-choi" style="margin-top:10px">
+                                <input type="hidden" name="maDA" value="<?php echo $da['maDA']; ?>">
+                                <button type="submit" class="btn btn-sm btn-danger">
+                                    <i class="fa-solid fa-check"></i> Từ Chối
+                                </button>
+                            </form>
+                            <form method="POST" action="quan-ly-do-an/huy-dang-ki" style="margin-top:10px">
+                                <input type="hidden" name="maDA" value="<?php echo $da['maDA']; ?>">
+                                <button type="submit" class="btn btn-sm btn-danger">
+                                    <i class="fa-solid fa-check"></i> Hủy Đăng Ký
+                                </button>
+                            </form>
+
+
+                            <a href="<?= base_url('quan-ly-do-an/chi-tiet-do-an/' . $da['maDA']) ?>" class="btn btn-sm btn-success" style="margin-top:10px">
+                                <i class="fa-solid fa-eye"></i> Xem Chi Tiết
+                            </a>
+
                         </td>
                     </tr>
                 <?php endforeach; ?>
@@ -207,11 +200,11 @@ Trang Chủ
                         <input type="date" name="ngayNop" id="ngayNopEdit" class="form-control" required>
                     </div>
                     <?php
-                    $trangThaiHienTai = isset($detai['trangThai']) ? $detai['trangThai'] : 'ChuaNop';
+                    $trangThaiHienTai = isset($detai['trangThaiDiem']) ? $detai['trangThaiDiem'] : 'ChuaNop';
                     ?>
                     <div class="mb-3">
                         <label for="trangThaiEdit" class="form-label">Trạng Thái Đồ Án</label>
-                        <select id="trangThaiEdit" name="trangThai" class="form-select" required>
+                        <select id="trangThaiEdit" name="trangThaiDiem" class="form-select" required>
                             <option value="ChuaNop" <?= ($trangThaiHienTai == 'ChuaNop') ? 'selected' : ''; ?>>Chưa Nộp</option>
                             <option value="DaNop" <?= ($trangThaiHienTai == 'DaNop') ? 'selected' : ''; ?>>Đã Nộp</option>
                             <option value="DaCham" <?= ($trangThaiHienTai == 'DaCham') ? 'selected' : ''; ?>>Đã Chấm</option>
@@ -291,12 +284,12 @@ Trang Chủ
                 const maGiangVien = this.getAttribute('data-maGiangVien');
                 const maSV = this.getAttribute('data-maSV');
                 const tenSinhVien = this.getAttribute('data-tenSinhVien');
-                const tenGiangVien= this.getAttribute('data-tenGiangVien');
+                const tenGiangVien = this.getAttribute('data-tenGiangVien');
                 const selectSinhVien = document.getElementById("tenSinhVienEdit");
                 const selectGiangVien = document.getElementById("tenGiangVienEdit");
                 const diem = this.getAttribute('data-diem');
                 const ngayNop = this.getAttribute('data-ngayNop');
-                const trangThai = this.getAttribute('data-trangThai');
+                const trangThaiDiem = this.getAttribute('data-trangThaiDiem');
 
                 console.log(maDA);
                 console.log(tenDoAn);
@@ -312,7 +305,7 @@ Trang Chủ
                 document.getElementById('tenSinhVienEdit').value = tenSinhVien;
                 document.getElementById('diemEdit').value = diem;
                 document.getElementById('ngayNopEdit').value = ngayNop;
-                document.getElementById('trangThaiEdit').value = trangThai;
+                document.getElementById('trangThaiEdit').value = trangThaiDiem;
 
                 for (let option of selectDeTai.options) {
                     if (option.value == maDT) {

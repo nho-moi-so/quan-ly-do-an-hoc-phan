@@ -9,86 +9,93 @@ Chi Tiết Đồ Án
 <?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
-<div class="container border-top pt-4">
-    <ul class="breadcrumb">
-        <li><a href="/quan-ly-do-an">Quản Lý Đồ Án / </a></li>
-        <li><a href=""> Đồ Án 1 / </a></li>
-        <li>Chi Tiết Đồ Án</li>
-    </ul>
-    <form action="<?= base_url('quan-ly-do-an/chitiet') ?>" method="POST">
-        <!-- <fieldset disabled> -->
-        <legend>Chi tiết đồ án</legend>
+<div class="container">
+    <nav>
+        <ol class="breadcrumb">
+            <li class="me-3">
+                <button class="btn btn-primary-emphasis p-0"><i class="fa-solid fa-arrow-left"></i></button>
+            </li>
+            <li class="breadcrumb-item"><a class="text-decoration-none text-secondary" href="/quan-ly-do-an">Quản Lý Đồ Án</a></li>
+            <li class="breadcrumb-item active text-primary"><?= $doan['tenDeTai'] . ' - #' . $doan['maDA'] ?? '' ?></li>
+        </ol>
+    </nav>
 
-        <div class="row d-flex align-items-center">
-            <div class="col-md-4">
-                <label for="id" class="form-label">ID</label>
-                <input type="text" id="maDA" class="form-control form-control-sm" value="<?= $doan['maDA'] ?? '' ?>" readonly>
-            </div>
+    <div class="row">
+        <div class="col-md-5">
+            <div class="container chi-tiet-container chi-tiet-do-an">
+                <h4>Chi Tiet Do An</h4>
+                <form action="<?= base_url('quan-ly-do-an/chitiet') ?>" method="POST">
+                    <div class="row d-flex align-items-center row-gap-3">
+                        <div class="col-md-6">
+                            <label for="id" class="form-label">ID</label>
+                            <input type="text" id="maDA" class="form-control form-control-sm" value="<?= $doan['maDA'] ?? '' ?>" readonly>
+                        </div>
 
-            <div class="col-md-4">
-                <label for="tenDoAn" class="form-label">Tên Đồ Án</label>
-                <input type="text" id="tenDeTai" class="form-control form-control-sm" value="<?= $doan['tenDeTai'] ?? '' ?>" readonly>
-            </div>
+                        <div class="col-md-6">
+                            <label for="tenDoAn" class="form-label">Tên Đồ Án</label>
+                            <input type="text" id="tenDeTai" class="form-control form-control-sm" value="<?= $doan['tenDeTai'] ?? '' ?>" readonly>
+                        </div>
 
-            <div class="col-md-4">
-                <label for="giangVien" class="form-label">Tên Giảng Viên</label>
-                <input type="text" id="tenGiangVien" class="form-control form-control-sm" value="<?= $doan['tenGiangVien'] ?? '' ?>" readonly>
+                        <div class="col-md-6">
+                            <label for="giangVien" class="form-label">Tên Giảng Viên</label>
+                            <input type="text" id="tenGiangVien" class="form-control form-control-sm" value="<?= $doan['tenGiangVien'] ?? '' ?>" readonly>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="ngayNop" class="form-label">Ngày Nộp</label>
+                            <input type="date" class="form-control" id="ngayNop" name="ngayNop"
+                                value="<?= !empty($doan['ngayNop']) ? date('Y-m-d', strtotime($doan['ngayNop'])) : '' ?>">
+                        </div>
+                    </div>
+
+                </form>
             </div>
         </div>
-        <!-- </fieldset> -->
+        <div class="col-md-7">
+            <div class="container chi-tiet-container chi-tiet-sinh-vien">
+                <h4>Chi Tiet Sinh Vien</h4>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th scope="col">ID</th>
+                            <th scope="col">Tên Sinh Viên</th>
+                            <th scope="col">Điểm</th>
+                            <th scope="col">Trạng Thái</th>
+                            <th scope="col">Hành Động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if (!empty($sinhVienList) && is_array($sinhVienList)): ?>
+                            <?php foreach ($sinhVienList as $sv): ?>
+                                <tr>
+                                    <th scope="row"><?= htmlspecialchars($sv['maDA'] ?? 'N/A') ?></th>
+                                    <td><?= htmlspecialchars($sv['hoTen'] ?? 'N/A') ?></td>
+                                    <td><?= htmlspecialchars($sv['diem'] ?? 'Chưa có') ?></td>
+                                    <td><?= htmlspecialchars($sv['trangThaiDiem'] ?? 'Chưa cập nhật') ?></td>
 
-        <div class="mb-3">
-            <label for="ngayNop" class="form-label">Ngày Nộp</label>
-            <input type="date" class="form-control" id="ngayNop" name="ngayNop"
-                value="<?= !empty($doan['ngayNop']) ? date('Y-m-d', strtotime($doan['ngayNop'])) : '' ?>">
+                                    <td>
+                                        <button class="btn btn-sm btn-primary" data-coreui-toggle="modal" data-coreui-target="#editDoAnModal"
+                                            data-id="<?php echo $sv['maDA']; ?>"
+                                            data-maSV="<?php echo $sv['maSV']; ?>"
+                                            data-hoTen="<?php echo $sv['hoTen']; ?>"
+                                            data-diem="<?php echo $sv['diem'] ?>"
+                                            data-trangThaiDiem="<?php echo $sv['trangThaiDiem'] ?>"> <i class="fa-solid fa-pen"></i>
+                                        </button>
+                                    </td>
+                                </tr>
 
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <tr>
+                                <td colspan="4">Không có dữ liệu</td>
+                            </tr>
+                        <?php endif; ?>
 
+                    </tbody>
+                </table>
+            </div>
         </div>
-    </form>
-
-    <table class="table">
-        <thead>
-            <tr>
-                <th scope="col">#</th>
-                <th scope="col">Tên Sinh Viên</th>
-                <th scope="col">Điểm</th>
-                <th scope="col">Trạng Thái</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php if (!empty($sinhVienList) && is_array($sinhVienList)): ?>
-                <?php foreach ($sinhVienList as $sv): ?>
-                    <tr>
-                        <th scope="row"><?= htmlspecialchars($sv['maDA'] ?? 'N/A') ?></th>
-                        <td><?= htmlspecialchars($sv['hoTen'] ?? 'N/A') ?></td>
-                        <td><?= htmlspecialchars($sv['diem'] ?? 'Chưa có') ?></td>
-                        <td><?= htmlspecialchars($sv['trangThaiDiem'] ?? 'Chưa cập nhật') ?></td>
-
-                        <td>
-                            <button class="btn btn-sm btn-primary" data-coreui-toggle="modal" data-coreui-target="#editDoAnModal"
-                                data-id="<?php echo $sv['maDA']; ?>"
-                                data-maSV="<?php echo $sv['maSV']; ?>"
-                                data-hoTen="<?php echo $sv['hoTen']; ?>"
-                                data-diem="<?php echo $sv['diem'] ?>"
-                                data-trangThaiDiem="<?php echo $sv['trangThaiDiem'] ?>"> <i class="fa-solid fa-pen"></i>
-                            </button>
-                        </td>
-                    </tr>
-
-                <?php endforeach; ?>
-            <?php else: ?>
-                <tr>
-                    <td colspan="4">Không có dữ liệu</td>
-                </tr>
-            <?php endif; ?>
-
-        </tbody>
-    </table>
-    <form action="<?= base_url('quan-ly-do-an/quaylai') ?>" method="POST">
-        <div class="d-flex align-items-center justify-content-end gap-2">
-            <button type="submit" name="quaylai" value="cancel" class="btn btn-secondary">Quay lại</button>
-        </div>
-    </form>
+    </div>
 
 </div>
 <div class="modal fade" id="editDoAnModal" tabindex="-1" aria-labelledby="editDoAnModalLabel" aria-hidden="true">

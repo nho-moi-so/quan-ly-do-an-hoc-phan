@@ -46,7 +46,7 @@ Trang Chủ
                             </button>
 
                             <a href="<?= base_url('quan-ly-lop/' . $n['maNganh']) ?>" class="btn btn-sm btn-success" style="background-color:rgb(53, 65, 157); color: white;">
-                                <i class="fa-solid fa-eye"></i> Xem Lớp
+                                <i class="fa-solid fa-eye"></i> Lớp
                             </a>
                         </td>
                     </tr>

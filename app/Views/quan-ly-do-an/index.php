@@ -38,7 +38,7 @@ Trang Chủ
                 <th scope="col">Tên Đề Tài</th>
                 <th scope="col">Sinh Viên Thực Hiện</th>
                 <th scope="col">Giảng Viên Hướng Dẫn</th>
-                <!-- <th scope="col">Lớp</th> -->
+                <th scope="col">Lớp</th>
                 <th scope="col">Trạng Thái</th>
                 <th scope="col">Thời Gian Đăng Ký</th>
                 <th scope="col">Hoạt Động</th>
@@ -52,14 +52,18 @@ Trang Chủ
                         <td><?php echo $da['tenDeTai']; ?></td>
                         <td><?php echo $da['tenSinhVien'] ?? 'N/A'; ?></td>
                         <td><?php echo $da['tenGiangVien'] ?? 'N/A'; ?></td>
+                        <td><?php echo $da['tenLop'] ?? 'N/A'; ?></td>
                         <td><?php echo $da['trangThai']; ?></td>
                         <td><?php echo $da['thoigianDangKi']; ?></td>
                         <td>
-                            <form method="POST" action="quan-ly-do-an/cap-nhat-trang-thai">
+                            <form method="POST" action="<?= base_url('quan-ly-do-an/cap-nhat-trang-thai') ?>">
                                 <input type="hidden" name="maDA" value="<?php echo $da['maDA']; ?>">
+                                <input type="hidden" name="maLop" value="<?php echo $da['maLop'] ?>">
+                                <?php if (session()->get('role') == 'GiangVien'): ?>
                                 <button type="submit" class="btn btn-sm btn-success">
                                     <i class="fa-solid fa-check"></i> Đồng Ý
                                 </button>
+                                <?php endif; ?>
                             </form>
                             <form method="POST" action="quan-ly-do-an/tu-choi" style="margin-top:10px">
                                 <input type="hidden" name="maDA" value="<?php echo $da['maDA']; ?>">
@@ -74,10 +78,11 @@ Trang Chủ
                                 </button>
                             </form>
 
-
+                            <?php if (session()->get('role') == 'SinhVien'): ?>
                             <a href="<?= base_url('quan-ly-do-an/chi-tiet-do-an/' . $da['maDA']) ?>" class="btn btn-sm btn-success" style="margin-top:10px">
                                 <i class="fa-solid fa-eye"></i> Xem Chi Tiết
                             </a>
+                            <?php endif; ?>
 
                         </td>
                     </tr>
@@ -280,6 +285,8 @@ Trang Chủ
                 const tenDoAn = this.getAttribute('data-tenDoAn');
                 const maDT = this.getAttribute('data-maDT');
                 const tenDeTai = this.getAttribute('data-tenDeTai');
+                const maLop = this.getAttribute('data-maLop');
+                const tenLop = this.getAttribute('data-tenLop');
                 const selectDeTai = document.getElementById("tenDeTaiEdit");
                 const maGiangVien = this.getAttribute('data-maGiangVien');
                 const maSV = this.getAttribute('data-maSV');
@@ -297,6 +304,7 @@ Trang Chủ
                 console.log(tenSinhVien);
                 console.log(ngayNop);
                 console.log(maSV);
+                console.log(maLop);
 
 
                 document.getElementById('maDAEdit').value = maDA;

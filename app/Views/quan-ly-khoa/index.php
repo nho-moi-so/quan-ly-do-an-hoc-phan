@@ -24,7 +24,7 @@ Trang Chủ
         <th scope="col">ID</th>
         <th scope="col">Tên Khoa</th>
         <th scope="col">Mô Tả</th>
-        <th scope="col">Hành Động</th>
+        <th scope="col" style="width: 25%">Hành Động</th>
       </tr>
     </thead>
     <tbody>
@@ -47,10 +47,10 @@ Trang Chủ
                 <i class="fa-solid fa-trash"></i>
               </button>
               <a href="<?= base_url('quan-ly-bo-mon/' . $k['maKhoa']) ?>" class="btn btn-sm btn-success" style="background-color:rgb(53, 65, 157); color: white;">
-                <i class="fa-solid fa-eye"></i> Xem Bộ Môn
+                <i class="fa-solid fa-eye"></i> Bộ Môn
               </a>
               <a href="<?= base_url('quan-ly-nganh/' . $k['maKhoa']) ?>" class="btn btn-sm btn-success" style="background-color:rgb(53, 65, 157); color: white;">
-                <i class="fa-solid fa-eye"></i> Xem Ngành
+                <i class="fa-solid fa-eye"></i> Ngành
               </a>
             </td>
            

@@ -5,6 +5,7 @@ namespace App\Controllers;
 use App\Models\DeTaiModel;
 use App\Models\GiangVienModel;
 use App\Models\NganhModel;
+use App\Models\SinhVienModel;
 
 class QuanLyDeTai extends BaseController
 {
@@ -215,4 +216,5 @@ class QuanLyDeTai extends BaseController
 
         return redirect()->to('/quan-ly-de-tai');
     }
+    
 }

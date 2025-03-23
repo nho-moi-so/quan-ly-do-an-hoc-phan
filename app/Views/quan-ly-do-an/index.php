@@ -59,31 +59,34 @@ Trang Chủ
                             <form method="POST" action="<?= base_url('quan-ly-do-an/cap-nhat-trang-thai') ?>">
                                 <input type="hidden" name="maDA" value="<?php echo $da['maDA']; ?>">
                                 <input type="hidden" name="maLop" value="<?php echo $da['maLop'] ?>">
-                                <?php if (session()->get('role') == 'GiangVien'): ?>
-                                <button type="submit" class="btn btn-sm btn-success">
-                                    <i class="fa-solid fa-check"></i> Đồng Ý
-                                </button>
+                                <?php if (session()->get('role') == 'GiangVien' || session()->get('role') == 'Admin'): ?>
+                                    <button type="submit" class="btn btn-sm btn-success">
+                                        <i class="fa-solid fa-check"></i> Đồng Ý
+                                    </button>
                                 <?php endif; ?>
                             </form>
                             <form method="POST" action="quan-ly-do-an/tu-choi" style="margin-top:10px">
                                 <input type="hidden" name="maDA" value="<?php echo $da['maDA']; ?>">
-                                <button type="submit" class="btn btn-sm btn-danger">
-                                    <i class="fa-solid fa-check"></i> Từ Chối
-                                </button>
+                                <?php if (session()->get('role') == 'GiangVien' || session()->get('role') == 'Admin'): ?>
+                                    <button type="submit" class="btn btn-sm btn-danger">
+                                        <i class="fa-solid fa-check"></i> Từ Chối
+                                    </button>
+                                <?php endif; ?>
                             </form>
                             <form method="POST" action="quan-ly-do-an/huy-dang-ki" style="margin-top:10px">
                                 <input type="hidden" name="maDA" value="<?php echo $da['maDA']; ?>">
-                                <button type="submit" class="btn btn-sm btn-danger">
-                                    <i class="fa-solid fa-check"></i> Hủy Đăng Ký
-                                </button>
+                                <?php if (session()->get('role') == 'GiangVien'): ?>
+                                    <button type="submit" class="btn btn-sm btn-danger">
+                                        <i class="fa-solid fa-check"></i> Hủy Đăng Ký
+                                    </button>
+                                <?php endif; ?>
                             </form>
 
-                            <?php if (session()->get('role') == 'SinhVien'): ?>
-                            <a href="<?= base_url('quan-ly-do-an/chi-tiet-do-an/' . $da['maDA']) ?>" class="btn btn-sm btn-success" style="margin-top:10px">
-                                <i class="fa-solid fa-eye"></i> Xem Chi Tiết
-                            </a>
+                            <?php if (session()->get('role') == 'SinhVien' || session()->get('role') == 'GiangVien'): ?>
+                                <a href="<?= base_url('quan-ly-do-an/chi-tiet-do-an/' . $da['maDA']) ?>" class="btn btn-sm btn-success" style="margin-top:10px">
+                                    <i class="fa-solid fa-eye"></i> Xem Chi Tiết
+                                </a>
                             <?php endif; ?>
-
                         </td>
                     </tr>
                 <?php endforeach; ?>
@@ -95,61 +98,63 @@ Trang Chủ
 </div>
 
 <!-- Add New Khoa Modal -->
-<div class="modal fade" id="addDoAnModal" tabindex="-1" aria-labelledby="addDoAnModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="addDoAnModalLabel">Thêm Đồ Án Mới</h5>
-                <button type="button" class="btn-close" data-coreui-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form action="<?= base_url('quan-ly-do-an/add-do-an') ?>" method="POST">
-                    <div class="mb-3">
-                        <label for="tenDeTai" class="form-label">Tên Đề tài</label>
-                        <select id="tenDeTai" name="maDT" class="form-select" required>
-                            <?php if ($detai): ?>
-                                <?php foreach ($detai as $dt): ?>
-                                    <option value="<?php echo $dt['maDT']; ?>"><?php echo $dt['tenDeTai']; ?></option>
-                                <?php endforeach; ?>
-                            <?php endif; ?>
-                        </select>
-                    </div>
+<?php if (session()->get('role') == 'GiangVien' || session()->get('role') == 'Admin'): ?>
+    <div class="modal fade" id="addDoAnModal" tabindex="-1" aria-labelledby="addDoAnModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addDoAnModalLabel">Thêm Đồ Án Mới</h5>
+                    <button type="button" class="btn-close" data-coreui-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="<?= base_url('quan-ly-do-an/add-do-an') ?>" method="POST">
+                        <div class="mb-3">
+                            <label for="tenDeTai" class="form-label">Tên Đề tài</label>
+                            <select id="tenDeTai" name="maDT" class="form-select" required>
+                                <?php if ($detai): ?>
+                                    <?php foreach ($detai as $dt): ?>
+                                        <option value="<?php echo $dt['maDT']; ?>"><?php echo $dt['tenDeTai']; ?></option>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
+                            </select>
+                        </div>
 
-                    <div class="mb-3">
-                        <label for="tenSinhVien" class="form-label">Sinh Viên Thực Hiện</label>
-                        <select id="tenSinhVien" name="maSV" class="form-select" required>
-                            <?php if ($sinhvien): ?>
-                                <?php foreach ($sinhvien as $sv): ?>
-                                    <option value="<?php echo $sv['maSV']; ?>"><?php echo $sv['hoTen']; ?></option>
-                                <?php endforeach; ?>
-                            <?php endif; ?>
-                        </select>
+                        <div class="mb-3">
+                            <label for="tenSinhVien" class="form-label">Sinh Viên Thực Hiện</label>
+                            <select id="tenSinhVien" name="maSV" class="form-select" required>
+                                <?php if ($sinhvien): ?>
+                                    <?php foreach ($sinhvien as $sv): ?>
+                                        <option value="<?php echo $sv['maSV']; ?>"><?php echo $sv['hoTen']; ?></option>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
+                            </select>
 
-                    </div>
+                        </div>
 
-                    <div class="mb-3">
-                        <label for="tenGiangVien" class="form-label">Giảng Viên</label>
-                        <select id="tenGiangVien" name="maGiangVien" class="form-select" required>
-                            <?php if ($giangvien): ?>
-                                <?php foreach ($giangvien as $gv): ?>
-                                    <option value="<?php echo $gv['maGiangVien']; ?>"><?php echo $gv['hoTen']; ?></option>
-                                <?php endforeach; ?>
-                            <?php endif; ?>
-                        </select>
-                    </div>
+                        <div class="mb-3">
+                            <label for="tenGiangVien" class="form-label">Giảng Viên</label>
+                            <select id="tenGiangVien" name="maGiangVien" class="form-select" required>
+                                <?php if ($giangvien): ?>
+                                    <?php foreach ($giangvien as $gv): ?>
+                                        <option value="<?php echo $gv['maGiangVien']; ?>"><?php echo $gv['hoTen']; ?></option>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
+                            </select>
+                        </div>
 
-                    <div class="d-flex align-items-center justify-content-end gap-2">
-                        <button type="button" class="btn btn-secondary" data-coreui-dismiss="modal">Đóng</button>
-                        <button type="submit" class="btn btn-primary">Thêm</button>
-                    </div>
-                </form>
+                        <div class="d-flex align-items-center justify-content-end gap-2">
+                            <button type="button" class="btn btn-secondary" data-coreui-dismiss="modal">Đóng</button>
+                            <button type="submit" class="btn btn-primary">Thêm</button>
+                        </div>
+                    </form>
 
-            </div>
-            <!-- <div class="modal-footer">
+                </div>
+                <!-- <div class="modal-footer">
             </div> -->
+            </div>
         </div>
     </div>
-</div>
+<?php endif; ?>
 
 <!-- Edit Giảng Viên Modal -->
 <div class="modal fade" id="editDoAnModal" tabindex="-1" aria-labelledby="editDoAnModalLabel" aria-hidden="true">

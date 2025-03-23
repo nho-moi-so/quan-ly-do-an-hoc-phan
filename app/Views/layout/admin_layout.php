@@ -27,37 +27,32 @@
             <li class="nav-item"><a class="nav-link" href="/">
                     <i class="fa-solid fa-house"></i>&nbsp; Trang Chủ</a>
             </li>
-
-            <li class="nav-item"><a class="nav-link" href="#"> Thống Kê Báo Cáo</a>
-            </li>
-
-            <li class="nav-group">
-                <a class="nav-link nav-group-toggle" href="#">
-                    Quản Lý Đào Tạo</a>
-                <ul class="nav-group-items compact">
-                    <li class="nav-item"><a class="nav-link" href="/quan-ly-khoa"><span class="nav-icon"><span
-                                    class="nav-icon-bullet"></span></span> Quản Lý Khoa</a></li>
-                    <!-- <li class="nav-item"><a class="nav-link" href="/quan-ly-bo-mon"><span class="nav-icon"><span
-                                    class="nav-icon-bullet"></span></span> Quản Lý Bộ Môn</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/quan-ly-nganh"><span class="nav-icon"><span
-                                    class="nav-icon-bullet"></span></span> Quản Lý Ngành</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/quan-ly-lop"><span class="nav-icon"><span
-                                    class="nav-icon-bullet"></span></span> Quản Lý Lớp</a></li> -->
-
-                </ul>
-            </li>
-            <li class="nav-group">
-                <a class="nav-link nav-group-toggle" href="#">
-                    Quản Lý Nhân Sự</a>
-                <ul class="nav-group-items compact">
-                    <li class="nav-item"><a class="nav-link" href="/quan-ly-giang-vien"><span class="nav-icon"><span
-                                    class="nav-icon-bullet"></span></span> Quản Lý Giảng Viên </a></li>
-                    <li class="nav-item"><a class="nav-link" href="/quan-ly-sinh-vien"><span class="nav-icon"><span
-                                    class="nav-icon-bullet"></span></span> Quản Lý Sinh Viên</a></li>
-
-
-                </ul>
-            </li>
+            <?php if (session()->get('role') == 'Admin'): ?>
+                <li class="nav-item"><a class="nav-link" href="#"> Thống Kê Báo Cáo</a>
+                </li>
+            <?php endif; ?>
+            <?php if (session()->get('role') == 'Admin'): ?>
+                <li class="nav-group">
+                    <a class="nav-link nav-group-toggle" href="#">
+                        Quản Lý Đào Tạo</a>
+                    <ul class="nav-group-items compact">
+                        <li class="nav-item"><a class="nav-link" href="/quan-ly-khoa"><span class="nav-icon"><span
+                                        class="nav-icon-bullet"></span></span> Quản Lý Khoa</a></li>
+                    </ul>
+                </li>
+            <?php endif; ?>
+            <?php if (session()->get('role') == 'GiangVien' || session()->get('role') == 'Admin'): ?>
+                <li class="nav-group">
+                    <a class="nav-link nav-group-toggle" href="#">
+                        Quản Lý Nhân Sự</a>
+                    <ul class="nav-group-items compact">
+                        <li class="nav-item"><a class="nav-link" href="/quan-ly-giang-vien"><span class="nav-icon"><span
+                                        class="nav-icon-bullet"></span></span> Quản Lý Giảng Viên </a></li>
+                        <li class="nav-item"><a class="nav-link" href="/quan-ly-sinh-vien"><span class="nav-icon"><span
+                                        class="nav-icon-bullet"></span></span> Quản Lý Sinh Viên</a></li>
+                    </ul>
+                </li>
+            <?php endif; ?>
             <li class="nav-item"><a class="nav-link" href="/quan-ly-de-tai">Quản Lý Đề Tài</a>
             </li>
             <li class="nav-item"><a class="nav-link" href="/quan-ly-do-an">Quản Lý Đồ Án</a>
@@ -79,31 +74,23 @@
                 </button>
                 <ul class="header-nav">
                     <li class="nav-item dropdown">
-                      
+
                         <a class="nav-link py-0 pe-0" data-coreui-toggle="dropdown" href="#"
                             role="button" aria-haspopup="true" aria-expanded="false">
-                            <span><?= session()->get('hoTen')?></span>
+                            <span><?= session()->get('hoTen') ?></span>
                             |
-                            <span><?= session()->get('role')?></span>
+                            <span><?= session()->get('role') ?></span>
                             <div class="avatar avatar-md">
-                                <img class="avatar-img" src="assets/images/default-user.webp"alt="user@email.com">
+                                <img class="avatar-img" src="assets/images/default-user.webp" alt="user@email.com">
                             </div>
-                           
+
                         </a>
                         <div class="dropdown-menu dropdown-menu-end pt-0">
-                            <div
-                                class="dropdown-header bg-body-tertiary text-body-secondary fw-semibold rounded-top mb-2">
-                                Account
-                            </div>
                             <a class="dropdown-item" href="#">
-                                <a class="dropdown-item" href="#">
-                                    Profile</a><a class="dropdown-item" href="#">
-                                    Settings</a><a class="dropdown-item" href="#">
-                                    Projects<span class="badge badge-sm bg-primary ms-2"></span></a>
+                                <a class="dropdown-item" href="<?= site_url('profile') ?>">Hồ sơ cá nhân</a>
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="">
-                                    Lock Account</a><a class="dropdown-item" href="<?= base_url('logout') ?>">
-                                    Logout</a>
+                                <a class="dropdown-item" href="<?= base_url('logout') ?>">Đăng xuất</a>
+                            </a>
                         </div>
                     </li>
                 </ul>
@@ -131,6 +118,21 @@
         </footer>
     </div>
 
+    <?php if (session()->getFlashdata('message') || session()->getFlashdata('error')): ?>
+        <div class="toast-container position-fixed top-0 end-0 p-3">
+            <div class="toast" id="coreuiToast" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="toast-header">
+                    <div class="rounded me-2 <?= session()->getFlashdata('error') ? 'bg-danger' : 'bg-success' ?>" style="width: 20px; height: 20px;"></div>
+                    <strong class="me-auto">Thông Báo</strong>
+                    <button type="button" class="btn-close" data-coreui-dismiss="toast" aria-label="Close"></button>
+                </div>
+                <div class="toast-body">
+                    <?= session()->getFlashdata('error') ? session()->getFlashdata('error') : session()->getFlashdata('message'); ?>
+                </div>
+            </div>
+        </div>
+    <?php endif; ?>
+
     <!-- Script Section -->
     <script src="<?= base_url('assets/lib/coreui-5.2.0/js/coreui.bundle.min.js') ?>"></script>
     <script src="<?= base_url('assets/lib/fontawesome/js/all.min.js') ?>"></script>
@@ -142,6 +144,13 @@
                 header.classList.toggle('shadow-sm', document.documentElement.scrollTop > 0);
             }
         });
+
+        var toastEl = document.getElementById('coreuiToast');
+
+        if (toastEl) {
+            var toast = new coreui.Toast(toastEl);
+            toast.show();
+        }
     </script>
     <?= $this->renderSection("scripts") ?>
 </body>

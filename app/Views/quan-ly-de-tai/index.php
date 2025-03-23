@@ -104,36 +104,40 @@ Trang Chủ
                             <td><?php echo $dt['tenNganh']; ?></td>
                             <td>
                                 <div class="d-flex justify-items-between align-items-center gap-2">
-                                    <button
-                                        class="btn btn-sm btn-primary"
-                                        title="Sửa"
-                                        data-coreui-toggle="modal"
-                                        data-coreui-target="#editDeTaiModal"
-                                        data-id="<?php echo $dt['maDT']; ?>"
-                                        data-tenDeTai="<?php echo $dt['tenDeTai']; ?>"
-                                        data-moTa="<?php echo $dt['moTa']; ?>"
-                                        data-maGiangVien="<?php echo $dt['maGiangVien']; ?>"
-                                        data-hoTen="<?php echo $dt['hoTen']; ?>"
-                                        data-maNganh="<?php echo $dt['maNganh']; ?>"
-                                        data-tenNganh="<?php echo $dt['tenNganh']; ?>"
-                                        data-hocKi="<?php echo $dt['hocKi']; ?>"
-                                        data-namHoc="<?php echo $dt['namHoc']; ?>"> <i class="fa-solid fa-pen"></i>
-                                    </button>
-                                    <button
-                                        class="btn btn-sm btn-danger text-light"
-                                        title="Xóa"
-                                        data-coreui-toggle="modal"
-                                        data-coreui-target="#deleteDeTaiModal"
-                                        data-id="<?php echo $dt['maDT']; ?>"
-                                        data-tenDeTai="<?php echo $dt['tenDeTai']; ?>"
-                                        data-moTa="<?php echo $dt['moTa']; ?>"
-                                        data-maGiangVien="<?php echo $dt['maGiangVien']; ?>"
-                                        data-maNganh="<?php echo $dt['maNganh']; ?>"
-                                        data-tenNganh="<?php echo $dt['tenNganh']; ?>"
-                                        data-hocKi="<?php echo $dt['hocKi']; ?>"
-                                        data-namHoc="<?php echo $dt['namHoc']; ?>">
-                                        <i class="fa-solid fa-trash"></i>
-                                    </button>
+                                    <?php if (session()->get('role') == 'GiangVien' || session()->get('role') == 'Admin'): ?>
+                                        <button
+                                            class="btn btn-sm btn-primary"
+                                            title="Sửa"
+                                            data-coreui-toggle="modal"
+                                            data-coreui-target="#editDeTaiModal"
+                                            data-id="<?php echo $dt['maDT']; ?>"
+                                            data-tenDeTai="<?php echo $dt['tenDeTai']; ?>"
+                                            data-moTa="<?php echo $dt['moTa']; ?>"
+                                            data-maGiangVien="<?php echo $dt['maGiangVien']; ?>"
+                                            data-hoTen="<?php echo $dt['hoTen']; ?>"
+                                            data-maNganh="<?php echo $dt['maNganh']; ?>"
+                                            data-tenNganh="<?php echo $dt['tenNganh']; ?>"
+                                            data-hocKi="<?php echo $dt['hocKi']; ?>"
+                                            data-namHoc="<?php echo $dt['namHoc']; ?>"> <i class="fa-solid fa-pen"></i>
+                                        </button>
+                                    <?php endif; ?>
+                                    <?php if (session()->get('role') == 'GiangVien' || session()->get('role') == 'Admin'): ?>
+                                        <button
+                                            class="btn btn-sm btn-danger text-light"
+                                            title="Xóa"
+                                            data-coreui-toggle="modal"
+                                            data-coreui-target="#deleteDeTaiModal"
+                                            data-id="<?php echo $dt['maDT']; ?>"
+                                            data-tenDeTai="<?php echo $dt['tenDeTai']; ?>"
+                                            data-moTa="<?php echo $dt['moTa']; ?>"
+                                            data-maGiangVien="<?php echo $dt['maGiangVien']; ?>"
+                                            data-maNganh="<?php echo $dt['maNganh']; ?>"
+                                            data-tenNganh="<?php echo $dt['tenNganh']; ?>"
+                                            data-hocKi="<?php echo $dt['hocKi']; ?>"
+                                            data-namHoc="<?php echo $dt['namHoc']; ?>">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
+                                    <?php endif; ?>
                                     <form method="POST" action="quan-ly-do-an/dang-ki-do-an">
                                         <input type="hidden" name="maDT" value="<?php echo $dt['maDT']; ?>">
                                         <input type="hidden" name="tenDeTai" value="<?php echo $dt['tenDeTai']; ?>">
@@ -144,9 +148,11 @@ Trang Chủ
                                         <input type="hidden" name="namHoc" value="<?php echo $dt['namHoc']; ?>">
                                         <input type="hidden" name="maSV" value="<?php echo session()->get('maSV'); ?>">
 
-                                        <button type="submit" class="btn btn-sm btn-success text-light" title="Đăng ký">
-                                            <i class="fa-solid fa-plus"></i>
-                                        </button>
+                                        <?php if (session()->get('role') == 'GiangVien' || session()->get('role') == 'SinhVien'): ?>
+                                            <button type="submit" class="btn btn-sm btn-success text-light" title="Đăng ký">
+                                                <i class="fa-solid fa-plus"></i>
+                                            </button>
+                                        <?php endif; ?>
                                     </form>
                                     <a href="<?= base_url('quan-ly-do-an/') ?>" class="btn btn-sm btn-info text-light" title="Xem chi tiết">
                                         <i class="fa-solid fa-eye"></i>
@@ -163,10 +169,10 @@ Trang Chủ
 </div>
 
 <!-- Add New Khoa Modal -->
-<div class="modal fade" id="addDeTaiModal" tabindex="-1" aria-labelledby="addDeTaiModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
+<?php if (session()->get('role') == 'GiangVien' || session()->get('role') == 'Admin'): ?>
+    <div class="modal fade" id="addDeTaiModal" tabindex="-1" aria-labelledby="addDeTaiModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
                 <h5 class="modal-title" id="addDeTaiModalLabel">Thêm Đề Tài Mới</h5>
                 <button type="button" class="btn-close" data-coreui-dismiss="modal" aria-label="Close"></button>
             </div>
@@ -232,7 +238,8 @@ Trang Chủ
             </div> -->
         </div>
     </div>
-</div>
+   
+<?php endif; ?>
 
 <!-- Edit Giảng Viên Modal -->
 <div class="modal fade" id="editDeTaiModal" tabindex="-1" aria-labelledby="editDeTaiModalLabel" aria-hidden="true">

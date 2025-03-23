@@ -10,23 +10,25 @@ class RoleFilter implements FilterInterface
     public function before(RequestInterface $request, $arguments = null)
     {
         $session = session();
-        
-        // Lấy thông tin role từ session
-        $userRole = $session->get('role'); // Giả sử role lưu trong session khi đăng nhập
+
+        $userRole = $session->get('role');
         
         if (!$userRole) {
-            return redirect()->to('/login')->with('error', 'Bạn cần đăng nhập!');
+            return redirect()->to('/login')->with('message', 'Vui lòng đăng nhập!');
         }
 
-        // Kiểm tra xem role của user có trong danh sách $arguments không
+        if (empty($arguments)) {
+            return;
+        }
+
         if (!in_array($userRole, $arguments)) {
-            return redirect()->to('/no-access')->with('error', 'Bạn không có quyền truy cập!');
+            return redirect()->to('/no-access')->with('message', 'Bạn không có quyền truy cập!');
         }
     }
 
     public function after(RequestInterface $request, ResponseInterface $response, $arguments = null)
     {
-        // Không cần xử lý gì sau khi request
+       
     }
 }
 

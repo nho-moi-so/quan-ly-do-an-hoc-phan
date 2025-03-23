@@ -6,12 +6,15 @@ use CodeIgniter\Router\RouteCollection;
  * @var RouteCollection $routes
  */
 $routes->get('/', 'Home::index');
-// Khoa
-$routes->get('/quan-ly-khoa', 'QuanLyKhoa::index');
-$routes->post('quan-ly-khoa/add-khoa', 'QuanLyKhoa::add');
-$routes->post('quan-ly-khoa/edit-khoa', 'QuanLyKhoa::edit');
-$routes->get('quan-ly-khoa/delete-khoa/(:num)', 'QuanLyKhoa::delete/$1');
+$routes->get('no-access', 'Home::noAccess');
 
+// Khoa
+$routes->group('quan-ly-khoa', ['filter' => 'role:Admin'], function ($routes) {
+    $routes->get('/', 'QuanLyKhoa::index');
+    $routes->post('add-khoa', 'QuanLyKhoa::add');
+    $routes->post('edit-khoa', 'QuanLyKhoa::edit');
+    $routes->get('delete-khoa/(:num)', 'QuanLyKhoa::delete/$1');
+});
 // Bộ Môn
 $routes->get('quan-ly-bo-mon/(:num)', 'QuanLyBoMon::index/$1');
 $routes->get('quan-ly-bo-mon', 'QuanLyBoMon::index');
@@ -80,7 +83,15 @@ $routes->get('login', 'User::login');
 $routes->post('user/xacThuc', 'User::xacThuc');
 $routes->get('logout', 'User::logout');
 
-if (file_exists(APPPATH . 'Config/' . ENVIRONMENT . '/Routes.php'))
-{
-	require APPPATH . 'Config/' . ENVIRONMENT . '/Routes.php';
+//profile
+
+// $routes->group('profile', ['filter' => 'role:Admin,GiangVien,SinhVien'], function ($routes) {
+$routes->get('profile', 'Profile::index'); // => /profile
+$routes->post('change-password', 'Profile::changePassword'); // => /profile/change-password
+// });
+
+
+
+if (file_exists(APPPATH . 'Config/' . ENVIRONMENT . '/Routes.php')) {
+    require APPPATH . 'Config/' . ENVIRONMENT . '/Routes.php';
 }

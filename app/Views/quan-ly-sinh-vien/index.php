@@ -47,6 +47,7 @@ Trang Chủ
                                 data-maLop="<?php echo $sv['maLop']; ?>"
                                 data-tenLop="<?php echo $sv['tenLop']; ?>"
                                 data-email="<?php echo $sv['email']; ?>"
+                                data-matKhauDefault="<?php echo $sv['matKhauDefault']; ?>"
                                 data-gioiTinh="<?php echo $sv['gioiTinh']; ?>"
                                 data-ngaySinh="<?php echo $sv['ngaySinh']; ?>"> <i class="fa-solid fa-pen"></i>
                             </button>
@@ -94,10 +95,10 @@ Trang Chủ
                             <?php endif; ?>
                         </select>
                     </div>
-                    <div class="mb-3">
+                    <!-- <div class="mb-3">
                         <label for="email" class="form-label">Email</label>
                         <input type="text" class="form-control" id="email" name="email" required>
-                    </div>
+                    </div> -->
                     <div class="mb-3">
                         <label for="gioiTinh" class="form-label">Giới tính:</label>
                         <select name="gioiTinh" id="gioiTinh" class="form-select" required>
@@ -163,6 +164,10 @@ Trang Chủ
                     <div class="mb-3">
                         <label for="ngaySinh" class="form-label">Ngày sinh:</label>
                         <input type="date" name="ngaySinh" class="form-control" id="ngaySinhEdit" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="matKhauDefault" class="form-label">Mật khẩu mặc định</label>
+                        <input type="text" class="form-control" id="matKhauDefault" readonly>
                     </div>
                     <div class="d-flex align-items-center justify-content-end gap-2">
                         <button type="button" class="btn btn-secondary" data-coreui-dismiss="modal">Đóng</button>
@@ -237,6 +242,8 @@ Trang Chủ
                 const gioiTinh = this.getAttribute('data-gioiTinh');
                 const ngaySinh = this.getAttribute('data-ngaySinh');
                 const selectLop = document.getElementById("tenLopEdit");
+                const matKhauDefaultEl = document.getElementById("matKhauDefault");
+                const matKhauDefault = this.getAttribute("data-matKhauDefault");
 
 
                 console.log(maSV);
@@ -254,6 +261,12 @@ Trang Chủ
                 document.getElementById('emailEdit').value = email;
                 document.getElementById('gioiTinhEdit').value = gioiTinh;
                 document.getElementById('ngaySinhEdit').value = ngaySinh;
+                document.getElementById('matKhauDefault').value = matKhauDefault;
+
+                // Ẩn nếu khong có matKhauDefault - Đã đổi mật khẩu 
+                if (!matKhauDefault) {
+                    matKhauDefaultEl.parentNode.style.display = 'none'
+                }
 
                 for (let option of selectLop.options) {
                     if (option.value == maLop) {

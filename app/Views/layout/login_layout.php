@@ -42,24 +42,23 @@
                         class="img-fluid" alt="Sample image">
                 </div>
                 <div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1">
-                    <form action="<?= base_url('user/doLogin') ?>" method="post">
+                    <form action="<?= base_url('user/xacThuc') ?>" method="POST">
 
                         <!-- Email input -->
                         <div data-mdb-input-init class="form-outline mb-4">
-                            <input type="email" id="form3Example3" class="form-control form-control-lg"
-                                placeholder="Enter a valid email address" />
                             <label class="form-label" for="form3Example3">Email address</label>
+                            <input type="email" name="email" id="form3Example3" class="form-control form-control-lg"
+                                placeholder="Enter a valid email address" />
                         </div>
 
                         <!-- Password input -->
                         <div data-mdb-input-init class="form-outline mb-3">
-                            <input type="password" id="form3Example4" class="form-control form-control-lg"
-                                placeholder="Enter password" />
                             <label class="form-label" for="form3Example4">Password</label>
+                            <input type="password" name="password" id="form3Example4" class="form-control form-control-lg"
+                                placeholder="Enter password" />
                         </div>
 
-                        <div class="d-flex justify-content-between align-items-center">
-                            <!-- Checkbox -->
+                        <!-- <div class="d-flex justify-content-between align-items-center">
                             <div class="form-check mb-0">
                                 <input class="form-check-input me-2" type="checkbox" value="" id="form2Example3" />
                                 <label class="form-check-label" for="form2Example3">
@@ -67,7 +66,7 @@
                                 </label>
                             </div>
                             <a href="#!" class="text-body">Forgot password?</a>
-                        </div>
+                        </div> -->
 
                         <div class="text-center text-lg-start mt-4 pt-2">
                             <button type="submit" data-mdb-button-init data-mdb-ripple-init class="btn btn-primary btn-lg"
@@ -106,6 +105,22 @@
             <!-- Right -->
         </div>
     </section>
+
+    <?php if (session()->getFlashdata('message') || session()->getFlashdata('error')): ?>
+        <div class="toast-container position-fixed top-0 end-0 p-3">
+            <div class="toast" id="coreuiToast" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="toast-header">
+                    <div class="rounded me-2 <?= session()->getFlashdata('message_type') === 'error' ? 'bg-danger' : 'bg-success' ?>" style="width: 20px; height: 20px;"></div>
+                    <strong class="me-auto">Thông Báo</strong>
+                    <button type="button" class="btn-close" data-coreui-dismiss="toast" aria-label="Close"></button>
+                </div>
+                <div class="toast-body">
+                    <?= session()->getFlashdata('message_type') === 'error' ? session()->getFlashdata('message') : session()->getFlashdata('message'); ?>
+                </div>
+            </div>
+        </div>
+    <?php endif; ?>
+
     <script src="<?= base_url('assets/lib/coreui-5.2.0/js/coreui.bundle.min.js') ?>"></script>
     <script src="<?= base_url('assets/lib/fontawesome/js/all.min.js') ?>"></script>
     <script>
@@ -116,6 +131,15 @@
                 header.classList.toggle('shadow-sm', document.documentElement.scrollTop > 0);
             }
         });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var toastEl = document.getElementById('coreuiToast');
+
+            if (toastEl) {
+                var toast = new coreui.Toast(toastEl);
+                toast.show();
+            }
+        })
     </script>
     <?= $this->renderSection("scripts") ?>
 </body>

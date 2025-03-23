@@ -63,9 +63,6 @@ class QuanLyDeTai extends BaseController
         $namHoc = trim($this->request->getPost('namHoc'));
         $hocKi = trim($this->request->getPost('hocKi'));
 
-        // var_dump($maGiangVien);
-        // die();
-
 
         if (empty($tenDeTai) || empty($moTa) || empty($maGiangVien) || empty($maNganh) || empty($namHoc) || empty($hocKi)) {
             session()->setFlashdata('message_type', 'error');

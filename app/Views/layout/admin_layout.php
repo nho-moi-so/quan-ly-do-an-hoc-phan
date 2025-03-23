@@ -79,10 +79,16 @@
                 </button>
                 <ul class="header-nav">
                     <li class="nav-item dropdown">
+                      
                         <a class="nav-link py-0 pe-0" data-coreui-toggle="dropdown" href="#"
                             role="button" aria-haspopup="true" aria-expanded="false">
-                            <div class="avatar avatar-md"><img class="avatar-img" src="assets/images/default-user.webp"
-                                    alt="user@email.com"></div>
+                            <span><?= session()->get('hoTen')?></span>
+                            |
+                            <span><?= session()->get('role')?></span>
+                            <div class="avatar avatar-md">
+                                <img class="avatar-img" src="assets/images/default-user.webp"alt="user@email.com">
+                            </div>
+                           
                         </a>
                         <div class="dropdown-menu dropdown-menu-end pt-0">
                             <div
@@ -93,12 +99,10 @@
                                 <a class="dropdown-item" href="#">
                                     Profile</a><a class="dropdown-item" href="#">
                                     Settings</a><a class="dropdown-item" href="#">
-                                    Payments<span class="badge badge-sm bg-secondary ms-2">42</span></a><a
-                                    class="dropdown-item" href="#">
-                                    Projects<span class="badge badge-sm bg-primary ms-2">42</span></a>
+                                    Projects<span class="badge badge-sm bg-primary ms-2"></span></a>
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="#">
-                                    Lock Account</a><a class="dropdown-item" href="#">
+                                <a class="dropdown-item" href="">
+                                    Lock Account</a><a class="dropdown-item" href="<?= base_url('logout') ?>">
                                     Logout</a>
                         </div>
                     </li>

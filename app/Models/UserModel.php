@@ -9,13 +9,12 @@ class UserModel extends Model
 
     protected $primaryKey = 'maUser';
     
-    protected $allowedFields = ['hoTen','matKhau','email','role'];
+    protected $allowedFields = ['hoTen','matKhau', 'matKhauDefault', 'email','role'];
 
     public function checkLogin($email, $password)
     {
         $user = $this->where('email', $email)->first();
         
-        // Kiểm tra xem có tài khoản không và mật khẩu có khớp không
         if ($user && password_verify($password, $user['password'])) {
             return $user;
         }

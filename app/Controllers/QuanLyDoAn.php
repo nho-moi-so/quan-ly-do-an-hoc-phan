@@ -16,7 +16,7 @@ class QuanLyDoAn extends BaseController
         $DoAnModel = new DoAnModel();
         $DeTaiModel = new DeTaiModel();
         $trangThai = $this->request->getGet('trangThai') ?? 1;
-
+        // dd($trangThai);
         $data['trangThai'] = $trangThai;
         $data['doan'] = $DoAnModel->select('doan.*, detai.tenDeTai, sv1.maSV, giangvien.maGiangVien, 
         userSV.hoTen as tenSinhVien, userGV.hoTen as tenGiangVien, lop.tenLop, trangThai.name as trangThai')
@@ -29,9 +29,8 @@ class QuanLyDoAn extends BaseController
             ->join('trangThai', 'trangThai.id = doan.trangThai', 'left')
             ->join('lop', 'lop.maLop = sv1.maLop', 'left')
             ->where('doan.trangThai', $trangThai)
-            ->orderBy('sv1.maSV', 'DESC')
+            ->orderBy('doan.thoigianDangKi', 'DESC')
             ->findAll();
-
 
         $UserModel = new UserModel();
         $data['giangvien'] = $UserModel
@@ -73,9 +72,6 @@ class QuanLyDoAn extends BaseController
         ];
 
         try {
-            // echo "<pre>";
-            // print_r($DoAnData); // Kiểm tra dữ liệu trước khi insert
-            // echo "</pre>";
             if ($DoAnModel->insert($DoAnData)) {
                 session()->setFlashdata('message_type', 'success');
                 session()->setFlashdata('message', 'Thêm đề tài thành công!');
@@ -187,12 +183,15 @@ class QuanLyDoAn extends BaseController
 
     public function dangKidoan()
     {
-        session()->set('maSV', 1);
         $DoAnModel = new DoAnModel();
+        $maSV = session()->get('maSV');
+
+        if (!$maSV) {
+            return redirect()->back()->with('error', 'Bạn chưa đăng nhập!');
+        }
 
         $maDT = trim($this->request->getPost('maDT'));
         $maGiangVien = trim($this->request->getPost('maGiangVien'));
-        $maSV = trim($this->request->getPost('maSV'));
         $trangThai = 1;
         $thoigianDangKi = date("Y-m-d H:i:s");;
 
@@ -200,6 +199,7 @@ class QuanLyDoAn extends BaseController
         $doan = $SinhVienModel->select('maLop')->where('maSV', $maSV)->first();
 
         $maLop = isset($doan['maLop']) ? $doan['maLop'] : null;
+
 
         if ($maLop === null) {
             return redirect()->back()->with('error', 'Không tìm thấy mã lớp của sinh viên!');
@@ -210,7 +210,6 @@ class QuanLyDoAn extends BaseController
             session()->setFlashdata('message', 'Vui lòng nhập đầy đủ thông tin!');
             return redirect()->back();
         }
-
 
         $existing = $DoAnModel
             ->where('maSV', $maSV)
@@ -230,10 +229,7 @@ class QuanLyDoAn extends BaseController
             'maLop' => $maLop,
             'trangThai' => $trangThai,
             'thoigianDangKi' => $thoigianDangKi
-
         ];
-        // var_dump($DoAnData);
-        // exit();
 
         try {
             if ($DoAnModel->insert($DoAnData)) {
@@ -262,7 +258,11 @@ class QuanLyDoAn extends BaseController
             return redirect()->back()->with('error', 'Không tìm thấy đồ án!');
         }
 
-        $doan = $DoAnModel->select('maSV, maLop, trangThai')->where('maDA', $maDA)->first();
+        $doan = $DoAnModel->select('maSV, maLop, trangThai, doan.maDT, tenDeTai')
+            ->where('maDA', $maDA)
+            ->join('detai', 'doan.maDT = detai.maDT', 'left')
+            ->first();
+
         if (!$doan) {
             return redirect()->back()->with('error', 'Không tìm thấy dữ liệu đồ án!');
         }
@@ -270,31 +270,30 @@ class QuanLyDoAn extends BaseController
         $maSV = $doan['maSV'];
         $maLop = $doan['maLop'];
 
+        if (empty($maSV)) {
+            return redirect()->back()->with('error', 'Không tìm thấy sinh viên!');
+        }
+
         if (empty($maLop)) {
             return redirect()->back()->with('error', 'Không tìm thấy lớp học của sinh viên!');
         }
 
         try {
-            // Kiểm tra trạng thái trước khi update
-            if ($doan['trangThai'] != $trangThai) {
-                $DoAnModel->update($maDA, ['trangThai' => $trangThai]);
-            }
+            $DoAnModel->update($maDA, ['trangThai' => $trangThai]);
 
             // Kiểm tra nhóm đã tồn tại chưa
             $nhom = $NhomDoAnModel->where('maLop', $maLop)->first();
 
             if (!$nhom) {
-                // Debug: Kiểm tra giá trị trước khi insert
-                log_message('debug', 'Tạo nhóm mới: ' . json_encode(['tenNhom' => "Nhóm_" . $maLop, 'maLop' => $maLop, 'maDA' => $maDA, 'sv1' => $maSV]));
-
                 // Tạo nhóm mới
-                $tenNhom = "Nhóm_" . $maLop;
+                $tenNhom = "Nhóm_" . $maLop . $doan['tenDeTai'];
                 $dataNhom = [
                     'tenNhom' => $tenNhom,
                     'maLop' => $maLop,
                     'maDA' => $maDA,
                     'sv1' => $maSV
                 ];
+
 
                 if (!$NhomDoAnModel->insert($dataNhom)) {
                     return redirect()->back()->with('error', 'Không thể tạo nhóm mới!');
@@ -315,13 +314,13 @@ class QuanLyDoAn extends BaseController
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'LỖI SQL: ' . $e->getMessage());
         }
-        return redirect()->to('quan-ly-do-an/');
+        return redirect()->to('quan-ly-do-an?trangThai=2');
     }
 
 
     public function tuchoi()
     {
-        $trangThai = 3;  // 3: Trạng thái từ chối
+        $trangThai = 3;
         $maDA = $this->request->getPost('maDA');
         $DoAnModel = new DoAnModel();
         $NhomDoAnModel = new NhomDoAnModel();
@@ -331,7 +330,6 @@ class QuanLyDoAn extends BaseController
         }
 
         try {
-            // Lấy thông tin đồ án
             $doAn = $DoAnModel->select('maSV, maLop')->where('maDA', $maDA)->first();
             if (!$doAn) {
                 return redirect()->back()->with('error', 'Đồ án không tồn tại!');

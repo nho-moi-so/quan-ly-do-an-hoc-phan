@@ -28,7 +28,7 @@ class Database extends Config
         'DSN'          => '',
         'hostname'     => 'localhost',
         'username'     => 'root',
-        'password'     => 'vertrigo',
+        'password'     => '',
         'database'     => 'quan_li_do_an_hoc_phan',
         'DBDriver'     => 'MySQLi',
         'DBPrefix'     => '',

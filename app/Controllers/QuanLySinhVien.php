@@ -5,13 +5,14 @@ namespace App\Controllers;
 use App\Models\SinhVienModel;
 use App\Models\LopModel;
 use App\Models\UserModel;
+use Transliterator;
 
 class QuanLySinhVien extends BaseController
 {
     public function index()
     {
         $SinhVienModel = new SinhVienModel();
-        $data['sinhvien'] = $SinhVienModel->select('sinhvien.*, user.hoTen, user.maUser, user.role, user.email, lop.tenLop, lop.maLop')
+        $data['sinhvien'] = $SinhVienModel->select('sinhvien.*, user.hoTen, user.maUser, user.role, user.email, user.matKhauDefault, lop.tenLop, lop.maLop')
             ->join('user', 'user.maUser = sinhvien.maUser', 'left')
             ->join('lop', 'lop.maLop = sinhvien.maLop', 'left')
             ->where('user.role', 'SinhVien')
@@ -30,53 +31,80 @@ class QuanLySinhVien extends BaseController
     {
         $UserModel = new UserModel();
         $SinhVienModel = new SinhVienModel();
+        $translate = Transliterator::create('Latin-ASCII;');
 
         $hoTen = trim($this->request->getPost('hoTen'));
-        $email = trim($this->request->getPost('email'));
         $maLop = trim($this->request->getPost('maLop'));
         $gioiTinh = trim($this->request->getPost('gioiTinh'));
         $ngaySinh = trim($this->request->getPost('ngaySinh'));
 
-        $userData = [
-            'hoTen' => $hoTen,
-            'email' => $email,
-            'role' => 'SinhVien'
-
-        ];
-        if (empty($hoTen) || empty($email) || empty($maLop) || empty($gioiTinh) || empty($ngaySinh)) {
+        if (empty($hoTen) || empty($maLop) || empty($gioiTinh) || empty($ngaySinh)) {
             session()->setFlashdata('message_type', 'error');
             session()->setFlashdata('message', 'Vui lòng nhập đầy đủ thông tin!');
             return redirect()->back();
         }
+
         try {
+            // 🔹 Tạo mật khẩu ngẫu nhiên 10 ký tự
+            $matKhau = bin2hex(random_bytes(5));
+            $hashedPassword = password_hash($matKhau, PASSWORD_DEFAULT);
 
-            $maUser = $UserModel->insert($userData);
+            // 🔹 Chuyển đổi tên thành không dấu
+            $hoTenKhongDau = $translate->transliterate(mb_strtolower($hoTen, 'UTF-8'));
+            $tenTach = explode(' ', trim($hoTenKhongDau));
+            $chuCaiDau = '';
 
-            if ($maUser) {
+            // 🔹 Lấy ký tự đầu của từng từ (trừ từ cuối)
+            for ($i = 0; $i < count($tenTach) - 1; $i++) {
+                $chuCaiDau .= mb_substr($tenTach[$i], 0, 1);
+            }
 
-                $sinhvienData = [
-                    'maUser' => $maUser,
-                    'hoTen' => $hoTen,
-                    'maLop' => $maLop,
-                    'email' => $email,
-                    'gioiTinh' => $gioiTinh,
-                    'ngaySinh' => $ngaySinh
-                ];
+            // 🔹 Lấy toàn bộ từ cuối cùng
+            $tenCuoi = end($tenTach);
 
-                if (
-                    $SinhVienModel->insert($sinhvienData)
-                ) {
-                    session()->setFlashdata('message_type', 'success');
-                    session()->setFlashdata('message', 'Thêm Sinh Viên thành công!');
-                } else {
+            // 🔹 Tạo dữ liệu User trước
+            $userData = [
+                'hoTen' => $hoTen,
+                'email' => '', // Để trống, lát nữa cập nhật
+                'matKhau' => $hashedPassword,
+                'matKhauDefault' => $matKhau,
+                'role' => 'SinhVien'
+            ];
 
-                    $UserModel->delete($maUser);
-                    session()->setFlashdata('message_type', 'error');
-                    session()->setFlashdata('message', 'Có lỗi xảy ra khi thêm sinh viên!');
-                }
-            } else {
+            // 🔹 Chèn vào bảng User & lấy `maUser`
+            $UserModel->insert($userData);
+            $maUser = $UserModel->getInsertID();
+
+            if (!$maUser) {
                 session()->setFlashdata('message_type', 'error');
-                session()->setFlashdata('message', 'Có lỗi xảy ra khi tạo tài khoản!');
+                session()->setFlashdata('message', 'Lỗi khi tạo tài khoản User.');
+                return redirect()->back();
+            }
+
+            // 🔹 Tạo email với chữ thường hoàn toàn
+            $email = strtolower(trim($chuCaiDau . $tenCuoi . $maUser . '@student.ctut.edu.vn'));
+
+            // 🔹 Chèn vào bảng sinhvien
+            $sinhvienData = [
+                'maUser' => $maUser,
+                'hoTen' => $hoTen,
+                'maLop' => $maLop,
+                'email' => $email,
+                'gioiTinh' => $gioiTinh,
+                'ngaySinh' => $ngaySinh
+            ];
+
+            if ($SinhVienModel->insert($sinhvienData)) {
+                // 🔹 Cập nhật email vào bảng user
+                $UserModel->update($maUser, ['email' => $email]);
+
+                session()->setFlashdata('message_type', 'success');
+                session()->setFlashdata('message', "Thêm Sinh Viên thành công! Email: {$email} | Mật khẩu: {$matKhau}");
+            } else {
+                // Nếu chèn sinh viên thất bại, xóa User đã tạo
+                $UserModel->delete($maUser);
+                session()->setFlashdata('message_type', 'error');
+                session()->setFlashdata('message', 'Có lỗi khi thêm sinh viên, đã rollback.');
             }
         } catch (\Exception $e) {
             session()->setFlashdata('message_type', 'error');
@@ -86,6 +114,7 @@ class QuanLySinhVien extends BaseController
         return redirect()->to('/quan-ly-sinh-vien');
     }
 
+
     public function edit()
     {
         $UserModel = new UserModel();
@@ -94,7 +123,7 @@ class QuanLySinhVien extends BaseController
 
         if (!$maSV) {
             session()->setFlashdata('message_type', 'error');
-            session()->setFlashdata('message', 'Sinh Viên không tồn tại!' );
+            session()->setFlashdata('message', 'Sinh Viên không tồn tại!');
             return redirect()->to('/quan-ly-sinh-vien');
         }
 

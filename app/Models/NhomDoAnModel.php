@@ -8,5 +8,5 @@ class NhomDoAnModel extends Model
 
     protected $primaryKey = 'maNhom';
     
-    protected $allowedFields = ['maLop','tenNhom','SV1','SV2','SV3'];
+    protected $allowedFields = ['maLop','tenNhom','sv1','sv2','sv3', 'maDA'];
 }
